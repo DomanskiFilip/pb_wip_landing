@@ -1,0 +1,29 @@
+@font-face {
+  font-family: 'MinecraftFonts';
+  src: url('/fonts/MinecraftRegular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'MinecraftFonts';
+  src:  url('/fonts/MinecraftBold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+
+body, html {
+  width: 100%;
+  background-color: #121212;
+  overflow-x: hidden;
+  font-family: 'MinecraftFonts', sans-serif;
+}
