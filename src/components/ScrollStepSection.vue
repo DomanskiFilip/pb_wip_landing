@@ -115,13 +115,15 @@ onMounted(() => {
 
 /* FOREGROUND */
 .content-layer {
+  width: 100%;
   position: absolute;
-  inset: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
   z-index: 10;
   display: flex;
   align-items: center;
   justify-content: center;
-  pointer-events: none;
 }
 
 /* SHADOW CARD FOR SLOT CONTENT */
@@ -134,10 +136,36 @@ onMounted(() => {
   background: rgba(0, 0, 0, 0.6);
   padding: 2rem 3rem;
   border-radius: 20px;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(30px);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   transition: all 0.3s ease-in-out;
-  max-width: 600px;
+  max-width: 700px;
   color: white;
+}
+
+::v-deep(.text-card) h1 {
+  margin: 0.5rem 0;
+  font-size: 2.5rem;
+}
+
+::v-deep(.text-card) p {
+  margin: 1.5rem 0; 
+  font-size: 1.2rem;
+}
+
+@media (max-width: 768px) {
+  .content-layer {
+    left: 0;
+    right: 0;
+    width: 100%;
+  }
+
+  ::v-deep(.text-card) h1 {
+    font-size: 1.8rem;
+  }
+
+  ::v-deep(.text-card) p {
+    font-size: 1rem;
+  }
 }
 </style>

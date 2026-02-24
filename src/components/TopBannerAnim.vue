@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import banner from '../assets/videos/MCCM-Banner2-v9.mp4';
+import banner from '../assets/videos/Banner.mp4';
 import banner_title from '../assets/images/banner-title.png';
 </script>
 
