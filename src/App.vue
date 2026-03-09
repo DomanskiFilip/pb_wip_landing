@@ -3,16 +3,16 @@
     <TopBannerAnim class="snap-point" />
 
     <!-- Intro (no steps needed) -->
-    <ScrollStepSection :start="1" :end="1">
+    <ScrollStepSection :start="1" :end="1" align="center">
       <IntroductionSection />
     </ScrollStepSection>
 
-    <ScrollStepSection :start="2"  :end="6" v-slot="{ stepIndex, steps }">
+    <ScrollStepSection :start="2"  :end="6" v-slot="{ stepIndex, steps }" align="left">
       <WeNeedYouSection :stepIndex="stepIndex" :steps="steps" />
     </ScrollStepSection>
 
     <!-- Socials -->
-    <ScrollStepSection :start="7" :end="11" v-slot="{ stepIndex, steps }">
+    <ScrollStepSection :start="7" :end="7" v-slot="{ stepIndex, steps }" align="right">
       <SocialsAndSponsorsSection :stepIndex="stepIndex" :steps="steps"/>
     </ScrollStepSection>
   </main>

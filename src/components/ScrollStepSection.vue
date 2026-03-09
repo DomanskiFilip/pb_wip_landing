@@ -15,7 +15,10 @@
     </div>
 
     <!-- Foreground -->
-    <div class="content-layer">
+    <div
+      class="content-layer"
+      :class="`align-${align}`"
+    >
       <slot
         :stepIndex="currentStep - start + 1"
         :steps="end - start + 1"
@@ -31,9 +34,10 @@ const props = defineProps<{
   start: number;
   end: number;
   totalImages?: number;
+  align?: "left" | "center" | "right"; // Added align prop
 }>();
 
-const totalImages = props.totalImages ?? 11;
+const totalImages = props.totalImages ?? 7;
 
 const sectionRef = ref<HTMLElement | null>(null);
 const currentStep = ref(props.start);
@@ -115,16 +119,33 @@ onMounted(() => {
 
 /* FOREGROUND */
 .content-layer {
-  width: 100%;
+  width: 50%;
   position: absolute;
   top: 0;
   bottom: 0;
-  right: 0;
   z-index: 10;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: center; /* Centers content *within* the layer */
 }
+
+/* Alignment classes */
+.content-layer.align-left {
+  left: 0;
+  right: auto; /* Ensures it's pushed to the left */
+}
+
+.content-layer.align-center {
+  left: 0;
+  right: 0;
+  margin: 0 auto; /* Centers the block element */
+}
+
+.content-layer.align-right {
+  left: auto;
+  right: 0; /* Pushes it to the right */
+}
+
 
 /* SHADOW CARD FOR SLOT CONTENT */
 ::v-deep(.text-card) {
@@ -149,7 +170,7 @@ onMounted(() => {
 }
 
 ::v-deep(.text-card) p {
-  margin: 1.5rem 0; 
+  margin: 1.5rem 0;
   font-size: 1.2rem;
 }
 
@@ -158,7 +179,20 @@ onMounted(() => {
     left: 0;
     right: 0;
     width: 100%;
+    /* Center alignment for smaller screens */
+    margin: 0 auto;
   }
+
+  /* Ensure alignment classes still work on smaller screens */
+  .content-layer.align-left {
+    left: 0;
+    right: auto;
+  }
+  .content-layer.align-right {
+    left: auto;
+    right: 0;
+  }
+
 
   ::v-deep(.text-card) h1 {
     font-size: 1.8rem;
