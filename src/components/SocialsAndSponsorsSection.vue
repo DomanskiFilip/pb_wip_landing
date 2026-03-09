@@ -32,7 +32,7 @@
       </a>
 
       <p class="social-text">
-        be on lookout for more news on our social media!
+        Be on the lookout for more news on our social media!
       </p>
     </div>
 
