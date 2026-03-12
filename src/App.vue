@@ -103,7 +103,7 @@ onUnmounted(() => {
 
 .section-nav {
   position: fixed;
-  bottom: 1.5rem;
+  bottom: 2rem;
   left: 50%;
   transform: translateX(-50%);
   z-index: 100;
@@ -133,7 +133,7 @@ onUnmounted(() => {
 
 .nav-label {
   font-size: 0.6rem;
-  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-family: 'MinecraftFonts', sans-serif;
   letter-spacing: 0.07em;
   text-transform: uppercase;
   white-space: nowrap;
