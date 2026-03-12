@@ -60,8 +60,8 @@ function onScroll() {
   const height = container.clientHeight;
   const children = Array.from(container.children) as HTMLElement[];
 
-  const bannerBottom = children[0]?.offsetTop + children[0]?.offsetHeight;
-  const socialsTop = children[3]?.offsetTop;
+  const bannerBottom = (children[0]?.offsetTop ?? 0) + (children[0]?.offsetHeight ?? 0);
+  const socialsTop = children[3]?.offsetTop ?? Infinity;
 
   if (scrollTop + height / 2 < bannerBottom) {
     activeSection.value = 'banner';
@@ -103,7 +103,7 @@ onUnmounted(() => {
 
 .section-nav {
   position: fixed;
-  bottom: 2rem;
+  bottom: 1.5rem;
   left: 50%;
   transform: translateX(-50%);
   z-index: 100;
@@ -133,7 +133,7 @@ onUnmounted(() => {
 
 .nav-label {
   font-size: 0.6rem;
-  font-family: 'MinecraftFonts', sans-serif;
+  font-family: 'Segoe UI', system-ui, sans-serif;
   letter-spacing: 0.07em;
   text-transform: uppercase;
   white-space: nowrap;
