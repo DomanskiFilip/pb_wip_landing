@@ -3,5 +3,5 @@ Temporary landing page for Project Beacon based on the winners of community cont
 Page Design based on, and including work of: 
 
  - speed_shark: 
- - alfiewatts:
+ - cosston:
  - yann_man:

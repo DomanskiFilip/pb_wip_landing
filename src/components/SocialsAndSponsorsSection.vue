@@ -51,6 +51,65 @@
         />
       </div>
     </div>
+    <div id="credits">
+      <p>Created with ❤️ by the Project Beacon team:</p>
+      <p>
+        Web Development:
+        <a href="https://filip.adappstudio.co.uk/" target="_blank">
+        Filip Domanski
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="12px"
+            viewBox="0 -960 960 960"
+            width="12px"
+            fill="#ffffff">
+            <path d="m243-240-51-51 405-405H240v-72h480v480h-72v-357L243-240Z"/></svg></a>
+      </p>
+      <p>
+        Design:
+        <a href="" target="_blank">
+        YannMan
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="12px"
+            viewBox="0 -960 960 960"
+            width="12px"
+            fill="#ffffff">
+            <path d="m243-240-51-51 405-405H240v-72h480v480h-72v-357L243-240Z"/></svg></a>
+        ,
+        <a href="" target="_blank">
+        cosston
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="12px"
+            viewBox="0 -960 960 960"
+            width="12px"
+            fill="#ffffff">
+            <path d="m243-240-51-51 405-405H240v-72h480v480h-72v-357L243-240Z"/></svg></a>
+        ,
+        <a href="" target="_blank">
+        speed_shark
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="12px"
+            viewBox="0 -960 960 960"
+            width="12px"
+            fill="#ffffff">
+            <path d="m243-240-51-51 405-405H240v-72h480v480h-72v-357L243-240Z"/></svg></a>
+      </p>
+      <p>
+        Editorial:
+        <a href="https://x.com/1m5rian" target="_blank">
+          m5rian
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="12px"
+            viewBox="0 -960 960 960"
+            width="12px"
+            fill="#ffffff">
+            <path d="m243-240-51-51 405-405H240v-72h480v480h-72v-357L243-240Z"/></svg></a>
+      </p>
+    </div>
   </div>
 </template>
 
@@ -63,6 +122,7 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
+  margin-right: 17rem;
 }
 
 .social-media {
@@ -85,11 +145,11 @@
 }
 
 .youtube-link {
-  left: 10%;
+  left: 7.5%;
 }
 
 .discord-link {
-  right: 10%;
+  right: 7.5%;
 }
 
 .social-icon {
@@ -117,7 +177,6 @@
 .social-text {
   font-size: 24px;
   line-height: 1.5;
-  color: #cccccc;
   margin-top: 150px;
   text-align: center;
 }
@@ -155,6 +214,20 @@
 
 .fire-logo {
   height: 100px;
+}
+
+#credits {
+  margin-top: 10px;
+}
+
+#credits p {
+  font-size: 12px;
+  margin: 2px 0;
+}
+
+#credits a {
+  color: #ffffff;
+  text-decoration: none;
 }
 
 /* Responsive Scaling */

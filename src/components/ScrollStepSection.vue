@@ -1,8 +1,5 @@
 <template>
-  <section
-    ref="sectionRef"
-    class="scroll-wrapper snap-point"
-  >
+  <section ref="sectionRef" class="scroll-wrapper snap-point">
     <!-- Background -->
     <div class="bg-layer">
       <img
@@ -15,14 +12,8 @@
     </div>
 
     <!-- Foreground -->
-    <div
-      class="content-layer"
-      :class="`align-${align}`"
-    >
-      <slot
-        :stepIndex="currentStep - start + 1"
-        :steps="end - start + 1"
-      />
+    <div class="content-layer" :class="`align-${align}`">
+      <slot :stepIndex="currentStep - start + 1" :steps="end - start + 1" />
     </div>
   </section>
 </template>
@@ -34,10 +25,10 @@ const props = defineProps<{
   start: number;
   end: number;
   totalImages?: number;
-  align?: "left" | "center" | "right"; // Added align prop
+  align?: "left" | "center" | "right";
 }>();
 
-const totalImages = props.totalImages ?? 7;
+const totalImages = props.totalImages ?? 18;
 
 const sectionRef = ref<HTMLElement | null>(null);
 const currentStep = ref(props.start);
@@ -70,11 +61,14 @@ const handleWheel = (e: WheelEvent) => {
 };
 
 onMounted(() => {
-  const observer = new IntersectionObserver((entries) => {
-    const entry = entries[0];
-    if (!entry) return;
-    isActive.value = entry.isIntersecting;
-  }, { threshold: 0.95 });
+  const observer = new IntersectionObserver(
+    (entries) => {
+      const entry = entries[0];
+      if (!entry) return;
+      isActive.value = entry.isIntersecting;
+    },
+    { threshold: 0.95 },
+  );
 
   if (sectionRef.value) observer.observe(sectionRef.value);
 
@@ -125,27 +119,30 @@ onMounted(() => {
   bottom: 0;
   z-index: 10;
   display: flex;
-  align-items: center;
-  justify-content: center; /* Centers content *within* the layer */
+  align-items: flex-start;
+  justify-content: right;
+  margin-top: 5rem;
 }
 
 /* Alignment classes */
 .content-layer.align-left {
   left: 0;
-  right: auto; /* Ensures it's pushed to the left */
+  right: auto;
+  margin-left: 2rem;
 }
 
 .content-layer.align-center {
   left: 0;
   right: 0;
-  margin: 0 auto; /* Centers the block element */
+  margin: 0 auto;
+  margin-top: 2rem;
 }
 
 .content-layer.align-right {
   left: auto;
-  right: 0; /* Pushes it to the right */
+  right: 0;
+  margin-right: 2rem;
 }
-
 
 /* SHADOW CARD FOR SLOT CONTENT */
 ::v-deep(.text-card) {
@@ -154,11 +151,11 @@ onMounted(() => {
   justify-content: center;
   align-items: center;
   text-align: center;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(255, 255, 255, 0.2);
   padding: 2rem 3rem;
   border-radius: 20px;
-  backdrop-filter: blur(30px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
   transition: all 0.3s ease-in-out;
   max-width: 700px;
   color: white;
@@ -179,11 +176,9 @@ onMounted(() => {
     left: 0;
     right: 0;
     width: 100%;
-    /* Center alignment for smaller screens */
     margin: 0 auto;
   }
 
-  /* Ensure alignment classes still work on smaller screens */
   .content-layer.align-left {
     left: 0;
     right: auto;
@@ -192,7 +187,6 @@ onMounted(() => {
     left: auto;
     right: 0;
   }
-
 
   ::v-deep(.text-card) h1 {
     font-size: 1.8rem;
