@@ -67,35 +67,9 @@
       </p>
       <p>
         Design:
-        <a href="" target="_blank">
-        YannMan
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            height="12px"
-            viewBox="0 -960 960 960"
-            width="12px"
-            fill="#ffffff">
-            <path d="m243-240-51-51 405-405H240v-72h480v480h-72v-357L243-240Z"/></svg></a>
-        ,
-        <a href="" target="_blank">
-        cosston
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            height="12px"
-            viewBox="0 -960 960 960"
-            width="12px"
-            fill="#ffffff">
-            <path d="m243-240-51-51 405-405H240v-72h480v480h-72v-357L243-240Z"/></svg></a>
-        ,
-        <a href="" target="_blank">
+        YannMan,
+        cosston,
         speed_shark
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            height="12px"
-            viewBox="0 -960 960 960"
-            width="12px"
-            fill="#ffffff">
-            <path d="m243-240-51-51 405-405H240v-72h480v480h-72v-357L243-240Z"/></svg></a>
       </p>
       <p>
         Editorial:

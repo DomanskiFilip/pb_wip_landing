@@ -152,7 +152,7 @@ onMounted(() => {
   align-items: center;
   text-align: center;
   background: rgba(255, 255, 255, 0.2);
-  padding: 2rem 3rem;
+  padding: 2rem 1rem;
   border-radius: 20px;
   backdrop-filter: blur(10px);
   box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
@@ -162,12 +162,11 @@ onMounted(() => {
 }
 
 ::v-deep(.text-card) h1 {
-  margin: 0.5rem 0;
   font-size: 2.5rem;
 }
 
 ::v-deep(.text-card) p {
-  margin: 1.5rem 0;
+  margin: 1rem 0;
   font-size: 1.2rem;
 }
 

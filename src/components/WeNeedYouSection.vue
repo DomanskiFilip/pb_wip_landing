@@ -68,11 +68,20 @@ const currentParagraph2 = computed(
 
 <style scoped>
 .text-card {
-  width: 600px;
+  width: 500px;
   height: 80vh;
   justify-content: flex-start;
-  padding-top: 10vh;
+  padding-top: 5vh;
   animation: fadeIn 0.6s ease-in-out;
+}
+
+.text-card h1 {
+  font-size: 3rem;
+}
+
+.text-card p {
+  font-size: 1.5rem;
+  line-height: 1.5;
 }
 
 @keyframes fadeIn {
