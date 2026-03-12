@@ -4,7 +4,7 @@
     <p v-html="currentParagraph1"></p>
     <p v-html="currentParagraph2"></p>
   </div>
-  <img v-if="stepIndex === 2" src="/src/assets/images/YOU.png" alt="We need you" style="margin-top: 5rem; margin-right: 5rem; max-width: 100%; height: 500px;" />
+  <img v-if="stepIndex === 2" src="/src/assets/images/YOU.png" alt="We need you" style="margin: auto; max-width: 100%; height: 500px; padding-left: 15vw;" />
 </template>
 
 <script setup lang="ts">
@@ -73,6 +73,7 @@ const currentParagraph2 = computed(
   justify-content: flex-start;
   padding-top: 5vh;
   animation: fadeIn 0.6s ease-in-out;
+  margin: auto 5vw auto 10vw;
 }
 
 .text-card h1 {

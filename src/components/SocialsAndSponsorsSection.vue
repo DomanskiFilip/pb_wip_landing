@@ -96,7 +96,7 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
-  margin-right: 17rem;
+  margin: auto 10vw auto 2vw;
 }
 
 .social-media {

@@ -121,14 +121,12 @@ onMounted(() => {
   display: flex;
   align-items: flex-start;
   justify-content: right;
-  margin-top: 5rem;
 }
 
 /* Alignment classes */
 .content-layer.align-left {
   left: 0;
   right: auto;
-  margin-left: 2rem;
 }
 
 .content-layer.align-center {
@@ -141,7 +139,6 @@ onMounted(() => {
 .content-layer.align-right {
   left: auto;
   right: 0;
-  margin-right: 2rem;
 }
 
 /* SHADOW CARD FOR SLOT CONTENT */
@@ -157,7 +154,6 @@ onMounted(() => {
   backdrop-filter: blur(10px);
   box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
   transition: all 0.3s ease-in-out;
-  max-width: 700px;
   color: white;
 }
 

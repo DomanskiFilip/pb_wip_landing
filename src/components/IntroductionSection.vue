@@ -5,3 +5,8 @@
   </div>
 </template>
 
+<style scoped>
+.text-card {
+  width: 100%;
+}
+</style>
