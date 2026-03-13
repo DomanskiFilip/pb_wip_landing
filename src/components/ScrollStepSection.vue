@@ -6,11 +6,10 @@
         v-for="n in totalImages"
         :key="n"
         :src="getImageUrl(n)"
-        :class="{ active: currentStep === n || (!hasSteps && n === start) }"
+        :class="{ active: activeStep === n || (!hasSteps && n === start) }"
         alt="background"
       />
     </div>
-
     <!-- Foreground -->
     <div class="content-layer" :class="`align-${align}`">
       <slot :stepIndex="currentStep - start + 1" :steps="end - start + 1" />
@@ -26,10 +25,10 @@ const props = defineProps<{
   end: number;
   totalImages?: number;
   align?: "left" | "center" | "right";
+  overrideStep?: number | null;
 }>();
 
 const totalImages = props.totalImages ?? 18;
-
 const sectionRef = ref<HTMLElement | null>(null);
 const currentStep = ref(props.start);
 const isActive = ref(false);
@@ -37,26 +36,23 @@ let locked = false;
 
 const hasSteps = computed(() => props.start !== props.end);
 
+// Use overrideStep when provided, otherwise use scroll-driven currentStep
+const activeStep = computed(() => props.overrideStep ?? currentStep.value);
+
 const getImageUrl = (n: number) =>
   new URL(`../assets/images/${n}.png`, import.meta.url).href;
 
 const handleWheel = (e: WheelEvent) => {
   if (!isActive.value || !hasSteps.value) return;
-
   const isDown = e.deltaY > 0;
   const isUp = e.deltaY < 0;
-
   if (isDown && currentStep.value === props.end) return;
   if (isUp && currentStep.value === props.start) return;
-
   e.preventDefault();
   if (locked) return;
-
   locked = true;
-
   if (isDown) currentStep.value++;
   else if (isUp) currentStep.value--;
-
   setTimeout(() => (locked = false), 120);
 };
 
@@ -69,12 +65,9 @@ onMounted(() => {
     },
     { threshold: 0.95 },
   );
-
   if (sectionRef.value) observer.observe(sectionRef.value);
-
   const container = document.getElementById("main-scroll-container");
   container?.addEventListener("wheel", handleWheel, { passive: false });
-
   onUnmounted(() => {
     observer.disconnect();
     container?.removeEventListener("wheel", handleWheel);
@@ -89,14 +82,11 @@ onMounted(() => {
   position: relative;
   overflow: hidden;
 }
-
-/* BACKGROUND */
 .bg-layer {
   position: absolute;
   inset: 0;
   z-index: 1;
 }
-
 .bg-layer img {
   position: absolute;
   inset: 0;
@@ -106,12 +96,9 @@ onMounted(() => {
   opacity: 0;
   transition: opacity 0.3s linear;
 }
-
 .bg-layer img.active {
   opacity: 1;
 }
-
-/* FOREGROUND */
 .content-layer {
   width: 50%;
   position: absolute;
@@ -122,26 +109,20 @@ onMounted(() => {
   align-items: flex-start;
   justify-content: right;
 }
-
-/* Alignment classes */
 .content-layer.align-left {
   left: 0;
   right: auto;
 }
-
 .content-layer.align-center {
   left: 0;
   right: 0;
   margin: 0 auto;
   margin-top: 2rem;
 }
-
 .content-layer.align-right {
   left: auto;
   right: 0;
 }
-
-/* SHADOW CARD FOR SLOT CONTENT */
 ::v-deep(.text-card) {
   display: flex;
   flex-direction: column;
@@ -156,15 +137,8 @@ onMounted(() => {
   transition: all 0.3s ease-in-out;
   color: white;
 }
-
-::v-deep(.text-card) h1 {
-  font-size: 2.5rem;
-}
-
-::v-deep(.text-card) p {
-  margin: 1rem 0;
-  font-size: 1.2rem;
-}
+::v-deep(.text-card) h1 { font-size: 2.5rem; }
+::v-deep(.text-card) p  { margin: 1rem 0; font-size: 1.2rem; }
 
 @media (max-width: 768px) {
   .content-layer {
@@ -173,22 +147,9 @@ onMounted(() => {
     width: 100%;
     margin: 0 auto;
   }
-
-  .content-layer.align-left {
-    left: 0;
-    right: auto;
-  }
-  .content-layer.align-right {
-    left: auto;
-    right: 0;
-  }
-
-  ::v-deep(.text-card) h1 {
-    font-size: 1.8rem;
-  }
-
-  ::v-deep(.text-card) p {
-    font-size: 1rem;
-  }
+  .content-layer.align-left  { left: 0; right: auto; }
+  .content-layer.align-right { left: auto; right: 0; }
+  ::v-deep(.text-card) h1 { font-size: 1.8rem; }
+  ::v-deep(.text-card) p  { font-size: 1rem; }
 }
 </style>

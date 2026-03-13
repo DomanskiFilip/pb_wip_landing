@@ -1,97 +1,103 @@
 <template>
-  <div class="text-card">
-    <div class="social-media">
-      <a
-        href="https://www.youtube.com/@projectbeaconworld"
-        target="_blank"
-        class="social-link youtube-link"
-      >
-        <img
-          src="../assets/images/YouTube_icon.png"
-          alt="YouTube"
-          class="social-icon"
-        />
-      </a>
-
+  <div class="section-wrapper">
+    <div class="text-card">
       <img
         src="../assets/images/search.png"
         alt="Minecraft Characters"
         class="minecraft-characters"
       />
 
-      <a
-        href="http://discord.gg/n92fmjhw8v"
-        target="_blank"
-        class="social-link discord-link"
-      >
-        <img
-          src="../assets/images/discord.png"
-          alt="Discord"
-          class="social-icon"
-        />
-      </a>
-
       <p class="social-text">
         Be on the lookout for more news on our social media!
       </p>
-    </div>
 
-    <div class="sponsors">
-      <h2 class="sponsors-title">SPONSORS:</h2>
-      <div class="sponsor-logos">
-        <img
-          src="../assets/images/YouTrack.png"
-          alt="YouTrack by JetBrains"
-          class="sponsor-logo youtrack-logo"
-        />
-        <img
-          src="../assets/images/24fire-white.png"
-          alt="24 Fire Gold Partner"
-          class="sponsor-logo fire-logo"
-        />
+      <!-- Each link emits its bg image index on hover; null on leave = back to 13 -->
+      <div class="social-icons-row">
+        <a
+          href="http://discord.gg/n92fmjhw8v"
+          target="_blank"
+          class="social-link"
+          @mouseenter="emit('hover-step', 14)"
+          @mouseleave="emit('hover-step', null)"
+        >
+          <img src="../assets/images/discord.png" alt="Discord" class="social-icon" />
+        </a>
+        <a
+          href="https://www.youtube.com/@projectbeaconworld"
+          target="_blank"
+          class="social-link"
+          @mouseenter="emit('hover-step', 15)"
+          @mouseleave="emit('hover-step', null)"
+        >
+          <img src="../assets/images/YouTube_icon.png" alt="YouTube" class="social-icon" />
+        </a>
+        <a
+          href="https://www.youtube.com/@projectbeaconworld"
+          target="_blank"
+          class="social-link"
+          @mouseenter="emit('hover-step', 16)"
+          @mouseleave="emit('hover-step', null)"
+        >
+          <img src="../assets/images/Blog_icon.png" alt="Blog" class="social-icon" />
+        </a>
       </div>
-    </div>
-    <div id="credits">
-      <p>Created with ❤️ by the Project Beacon team:</p>
-      <p>
-        Web Development:
-        <a href="https://filip.adappstudio.co.uk/" target="_blank">
-        Filip Domanski
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            height="12px"
-            viewBox="0 -960 960 960"
-            width="12px"
-            fill="#ffffff">
-            <path d="m243-240-51-51 405-405H240v-72h480v480h-72v-357L243-240Z"/></svg></a>
-      </p>
-      <p>
-        Design:
-        YannMan,
-        cosston,
-        speed_shark
-      </p>
-      <p>
-        Editorial:
-        <a href="https://x.com/1m5rian" target="_blank">
-          m5rian
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            height="12px"
-            viewBox="0 -960 960 960"
-            width="12px"
-            fill="#ffffff">
-            <path d="m243-240-51-51 405-405H240v-72h480v480h-72v-357L243-240Z"/></svg></a>
-      </p>
+
+      <div class="sponsors">
+        <h2 class="sponsors-title">Special Thanks to our sponsors!</h2>
+        <div class="sponsor-logos">
+          <a
+            href="https://youtrack.projectbeacon.world/"
+            target="_blank"
+            @mouseenter="emit('hover-step', 17)"
+            @mouseleave="emit('hover-step', null)"
+          >
+            <img src="../assets/images/YouTrack-white.png" alt="YouTrack by JetBrains" class="sponsor-logo youtrack-logo" />
+          </a>
+          <a
+            href="https://24fire.de/?ref=beacon"
+            target="_blank"
+            @mouseenter="emit('hover-step', 18)"
+            @mouseleave="emit('hover-step', null)"
+          >
+            <img src="../assets/images/24fire-white.png" alt="24 Fire Gold Partner" class="sponsor-logo fire-logo" />
+          </a>
+        </div>
+      </div>
+
+      <div id="credits">
+        <p>Created with ❤️ by the Project Beacon team:</p>
+        <p>
+          Web Development:
+          <a href="https://filip.adappstudio.co.uk/" target="_blank">
+            Filip Domanski
+            <svg xmlns="http://www.w3.org/2000/svg" height="12px" viewBox="0 -960 960 960" width="12px" fill="#ffffff">
+              <path d="m243-240-51-51 405-405H240v-72h480v480h-72v-357L243-240Z"/>
+            </svg>
+          </a>
+        </p>
+        <p>Design: YannMan, cosston, speed_shark</p>
+        <p>
+          Editorial:
+          <a href="https://x.com/1m5rian" target="_blank">
+            m5rian
+            <svg xmlns="http://www.w3.org/2000/svg" height="12px" viewBox="0 -960 960 960" width="12px" fill="#ffffff">
+              <path d="m243-240-51-51 405-405H240v-72h480v480h-72v-357L243-240Z"/>
+            </svg>
+          </a>
+        </p>
+      </div>
     </div>
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const emit = defineEmits<{
+  (e: 'hover-step', step: number | null): void
+}>()
+</script>
 
 <style scoped>
-/* Main Container */
-.text-card {
+.section-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -99,32 +105,52 @@
   margin: auto 10vw auto 2vw;
 }
 
-.social-media {
+.text-card {
   display: flex;
-  position: relative;
   flex-direction: column;
   align-items: center;
   width: 100%;
-  max-width: 800px;
+  max-width: 640px;
+  padding: 30px 32px 28px;
+  box-sizing: border-box;
+  position: relative;
+  overflow: visible;
+}
+
+.minecraft-characters {
+  position: absolute;
+  top: -260px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 400px;
+  height: auto;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.social-text {
+  font-size: 18px;
+  line-height: 1.5;
+  text-align: center;
+  margin: 0 0 24px;
+}
+
+.social-icons-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 28px;
+  margin-bottom: 32px;
 }
 
 .social-link {
-  position: absolute;
-  top: 10%;
-  z-index: 20;
   display: inline-block;
   text-decoration: none;
   transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  cursor: pointer;
 }
 
-.youtube-link {
-  left: 7.5%;
-}
-
-.discord-link {
-  right: 7.5%;
-}
+.social-link:hover  { transform: scale(1.15); }
+.social-link:active { transform: scale(0.9); }
 
 .social-icon {
   width: 80px;
@@ -132,124 +158,68 @@
   display: block;
 }
 
-.social-link:hover {
-  transform: scale(1.15);
-  cursor: pointer;
-}
-
-.social-link:active {
-  transform: scale(0.9);
-}
-
-.minecraft-characters {
-  width: 300px;
-  height: auto;
-  margin-top: 20px;
-  margin-bottom: 30px;
-}
-
-.social-text {
-  font-size: 24px;
-  line-height: 1.5;
-  margin-top: 150px;
-  text-align: center;
-}
-
 .sponsors {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
-  max-width: 800px;
+  margin-bottom: 24px;
 }
 
 .sponsors-title {
-  font-size: 30px;
-  margin-bottom: 30px;
+  font-size: 22px;
+  margin: 0 0 16px;
 }
 
 .sponsor-logos {
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
   width: 100%;
-  gap: 40px;
+  gap: 32px;
+  flex-wrap: wrap;
 }
 
-.sponsor-logo {
-  height: 80px;
-  width: auto;
-  object-fit: contain;
+.sponsor-logos a {
+  display: inline-flex;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.youtrack-logo {
-  height: 90px;
-}
+.sponsor-logos a:hover  { transform: scale(1.1); }
+.sponsor-logos a:active { transform: scale(0.9); }
 
-.fire-logo {
-  height: 100px;
-}
+.sponsor-logo  { height: 70px; width: auto; object-fit: contain; }
+.youtrack-logo { height: 80px; }
+.fire-logo     { height: 90px; }
 
 #credits {
-  margin-top: 10px;
+  width: 100%;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding-top: 16px;
 }
 
-#credits p {
-  font-size: 12px;
-  margin: 2px 0;
-}
+#credits p { font-size: 12px; margin: 2px 0; }
+#credits a { color: #ffffff; text-decoration: none; }
 
-#credits a {
-  color: #ffffff;
-  text-decoration: none;
-}
-
-/* Responsive Scaling */
 @media (max-width: 768px) {
-  .social-icon {
-    width: 60px;
-  }
-  .youtube-link {
-    left: 5%;
-  }
-  .discord-link {
-    right: 5%;
-  }
-  .minecraft-characters {
-    width: 200px;
-  }
-  .social-text {
-    font-size: 20px;
-    margin-top: 120px;
-  }
-  .sponsors-title {
-    font-size: 24px;
-  }
-  .sponsor-logos {
-    flex-direction: column;
-    gap: 30px;
-  }
-  .sponsor-logo {
-    height: 70px;
-  }
+  .minecraft-characters { width: 300px; top: -120px; }
+  .text-card     { padding-top: 160px; }
+  .social-icon   { width: 64px; }
+  .sponsors-title { font-size: 18px; }
+  .sponsor-logo  { height: 60px; }
+  .youtrack-logo { height: 68px; }
+  .fire-logo     { height: 75px; }
 }
 
 @media (max-width: 480px) {
-  .social-icon {
-    width: 50px;
+  .minecraft-characters { width: 220px; top: -90px; }
+  .text-card {
+    padding-top: 130px;
+    padding-left: 20px;
+    padding-right: 20px;
   }
-  .youtube-link {
-    left: 2%;
-  }
-  .discord-link {
-    right: 2%;
-  }
-  .minecraft-characters {
-    width: 150px;
-  }
-  .social-text {
-    font-size: 18px;
-    margin-top: 100px;
-  }
+  .social-text   { font-size: 16px; }
+  .social-icon   { width: 52px; }
+  .sponsor-logos { gap: 20px; }
 }
 </style>

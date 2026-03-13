@@ -21,13 +21,13 @@ const content = [
     paragraph1:
       'Project Beacon is a non-profit <span class="bold">community</span>  project (not affiliated with Mojang studios in any way) that aims to create a fully animated feature-length film based on the universe of Minecraft.',
     paragraph2:
-      'That\'s right, whether you\'re a writer, a storyboard artist, a 3D artist, a voice actor, a musician, an editor or just passionate about the game, <span class="bold">We need <span class="animated-text">YOUR</span> help to make this project a reality!</span> ',
+      'That\'s right, whether you\'re a <span style="color: hsl(358, 100%, 49%);">writer</span>, a <span style="color: hsl(170, 100%, 60%);">storyboard artist</span>, a <span style="color: hsl(25, 100%, 62%);">3D artist</span>, a <span style="color: hsl(288, 99%, 34%);">voice actor</span>, a <span style="color: hsl(137, 100%, 53%);">musician</span>, an <span style="color: hsl(72, 100%, 58%);">editor</span> or just passionate about the game, <span class="bold">We need <span class="animated-text">YOUR</span> help to make this project a reality!</span> ',
   },
   { title: "", paragraph1: "", paragraph2: "" },
   {
     title: "How would this work?",
     paragraph1:
-      'We are currently working on the official voting platform, <span class="bold"> where all decisions will be made through a collective vote, selecting the work preferred by the majority</span>; from the scripts to the animation style to the sound design...etc.',
+      'We are currently working on the official voting platform, <span class="bold"> where all decisions will be made through a collective vote, selecting the work preferred by the majority</span>; from the scripts to the animation style to the sound design.',
     paragraph2:
       'The official website is currently in beta testing, this is only a  <span class="bold">temporary site</span>, once it is up, you will be able to officially be part of the project, choose your department and join a team!',
   },
@@ -35,7 +35,7 @@ const content = [
   {
     title: "Great! So when do we start?",
     paragraph1:
-      "We will publicly test the system soon. once we know it can work, we will produce a concept trailer with the platform before working on the gigantic movie. For more details check out the blogs page.",
+      "We will publicly test the system soon. Once we know it can work, we will produce a concept trailer with the platform before working on the gigantic movie. For more details, check out the blogs page.",
     paragraph2:
       "The goal of this trailer would essentially be to test the workflow, give our team a chance to finally show off their skills and anticipate reactions to the project. Subscribe to our YouTube channel to be notified!",
   },
@@ -45,9 +45,9 @@ const content = [
   { title: "", paragraph1: "", paragraph2: "" },
   { title: "", paragraph1: "", paragraph2: "" },
   {
-    title: "What's next for project beacon?",
+    title: "What's next for Project Beacon?",
     paragraph1:
-      "The plan is as follows: finish working on the voting website, and as soon as that's done, use it to make a concept trailer, then, depending on how it is received, finally begin preproduction on the movie.",
+      "The plan is as follows: finish working on the voting website, and as soon as that's done, use it to make a concept trailer, then, depending on how it is received, finally begin pre-production on the movie.",
     paragraph2:
       '<span class="bold">We hope you will join us on this journey!</span>',
   },

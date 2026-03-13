@@ -10,8 +10,13 @@
       <WeNeedYouSection :stepIndex="stepIndex" :steps="steps" />
     </ScrollStepSection>
 
-    <ScrollStepSection :start="13" :end="18" v-slot="{ stepIndex, steps }" align="left" data-section="socials">
-      <SocialsAndSponsorsSection :stepIndex="stepIndex" :steps="steps"/>
+    <ScrollStepSection
+      :start="13" :end="18"
+      align="left"
+      data-section="socials"
+      :overrideStep="socialsHoverStep"
+    >
+      <SocialsAndSponsorsSection @hover-step="socialsHoverStep = $event" />
     </ScrollStepSection>
   </main>
 
@@ -45,6 +50,8 @@ const sections = [
 ];
 
 const activeSection = ref('banner');
+// Driven by hovering links in SocialsAndSponsorsSection; null = use default (13)
+const socialsHoverStep = ref<number | null>(null);
 
 function scrollToSection(index: number) {
   const container = document.getElementById('main-scroll-container');
@@ -156,6 +163,6 @@ footer {
   font-size: 0.8rem;
   color: #555;
   background-color: black;
-  z-index: 5;
+  z-index: 20;
 }
 </style>
