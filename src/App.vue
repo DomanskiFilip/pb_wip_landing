@@ -6,12 +6,19 @@
       <IntroductionSection />
     </ScrollStepSection>
 
-    <ScrollStepSection :start="2" :end="12" v-slot="{ stepIndex, steps }" align="right" data-section="about">
+    <ScrollStepSection
+      :start="2"
+      :end="12"
+      v-slot="{ stepIndex, steps }"
+      align="right"
+      data-section="about"
+    >
       <WeNeedYouSection :stepIndex="stepIndex" :steps="steps" />
     </ScrollStepSection>
 
     <ScrollStepSection
-      :start="13" :end="18"
+      :start="13"
+      :end="18"
       align="left"
       data-section="socials"
       :overrideStep="socialsHoverStep"
@@ -32,61 +39,65 @@
     </button>
   </nav>
 
-  <footer>We are in no way affiliated with Mojang or Microsoft. This is a fan-made community project.</footer>
+  <footer>
+    We are in no way affiliated with Mojang or Microsoft. This is a fan-made
+    community project.
+  </footer>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
-import TopBannerAnim from './components/TopBannerAnim.vue';
-import ScrollStepSection from './components/ScrollStepSection.vue';
-import IntroductionSection from './components/IntroductionSection.vue';
-import WeNeedYouSection from './components/WeNeedYouSection.vue';
-import SocialsAndSponsorsSection from './components/SocialsAndSponsorsSection.vue';
+import { ref, onMounted, onUnmounted } from "vue";
+import TopBannerAnim from "./components/TopBannerAnim.vue";
+import ScrollStepSection from "./components/ScrollStepSection.vue";
+import IntroductionSection from "./components/IntroductionSection.vue";
+import WeNeedYouSection from "./components/WeNeedYouSection.vue";
+import SocialsAndSponsorsSection from "./components/SocialsAndSponsorsSection.vue";
 
 const sections = [
-  { id: 'banner',  label: 'Banner',  scrollIndex: 0 },
-  { id: 'about',   label: 'About',   scrollIndex: 1 },
-  { id: 'socials', label: 'Socials', scrollIndex: 3 },
+  { id: "banner", label: "Banner", scrollIndex: 0 },
+  { id: "about", label: "About", scrollIndex: 1 },
+  { id: "socials", label: "Socials", scrollIndex: 3 },
 ];
 
-const activeSection = ref('banner');
+const activeSection = ref("banner");
 // Driven by hovering links in SocialsAndSponsorsSection; null = use default (13)
 const socialsHoverStep = ref<number | null>(null);
 
 function scrollToSection(index: number) {
-  const container = document.getElementById('main-scroll-container');
+  const container = document.getElementById("main-scroll-container");
   if (!container) return;
   const target = container.children[index] as HTMLElement;
-  if (target) target.scrollIntoView({ behavior: 'smooth' });
+  if (target) target.scrollIntoView({ behavior: "smooth" });
 }
 
 function onScroll() {
-  const container = document.getElementById('main-scroll-container');
+  const container = document.getElementById("main-scroll-container");
   if (!container) return;
   const scrollTop = container.scrollTop;
   const height = container.clientHeight;
   const children = Array.from(container.children) as HTMLElement[];
 
-  const bannerBottom = (children[0]?.offsetTop ?? 0) + (children[0]?.offsetHeight ?? 0);
+  const bannerBottom =
+    (children[0]?.offsetTop ?? 0) + (children[0]?.offsetHeight ?? 0);
   const socialsTop = children[3]?.offsetTop ?? Infinity;
 
   if (scrollTop + height / 2 < bannerBottom) {
-    activeSection.value = 'banner';
+    activeSection.value = "banner";
   } else if (scrollTop + height / 2 >= socialsTop) {
-    activeSection.value = 'socials';
+    activeSection.value = "socials";
   } else {
-    activeSection.value = 'about';
+    activeSection.value = "about";
   }
 }
 
 onMounted(() => {
-  const container = document.getElementById('main-scroll-container');
-  container?.addEventListener('scroll', onScroll, { passive: true });
+  const container = document.getElementById("main-scroll-container");
+  container?.addEventListener("scroll", onScroll, { passive: true });
 });
 
 onUnmounted(() => {
-  const container = document.getElementById('main-scroll-container');
-  container?.removeEventListener('scroll', onScroll);
+  const container = document.getElementById("main-scroll-container");
+  container?.removeEventListener("scroll", onScroll);
 });
 </script>
 
@@ -98,7 +109,9 @@ onUnmounted(() => {
   scroll-behavior: auto;
   overscroll-behavior-y: contain;
 
-  &::-webkit-scrollbar { display: none; }
+  &::-webkit-scrollbar {
+    display: none;
+  }
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
@@ -140,12 +153,14 @@ onUnmounted(() => {
 
 .nav-label {
   font-size: 0.6rem;
-  font-family: 'MinecraftFonts', sans-serif;
+  font-family: "MinecraftFonts", sans-serif;
   letter-spacing: 0.07em;
   text-transform: uppercase;
   white-space: nowrap;
   color: rgba(255, 255, 255, 0.35);
-  transition: color 0.25s ease, font-size 0.25s ease;
+  transition:
+    color 0.25s ease,
+    font-size 0.25s ease;
   display: block;
 }
 
@@ -164,5 +179,11 @@ footer {
   color: #555;
   background-color: black;
   z-index: 20;
+}
+
+@media (max-width: 480px) {
+  .section-nav {
+    bottom: 3.5rem;
+  }
 }
 </style>

@@ -43,4 +43,11 @@ img {
   width: 50%;
   height: 35%;
 }
+
+@media (max-width: 999px) {
+  img {
+    width: 85%;
+    height: auto;
+  }
+}
 </style>

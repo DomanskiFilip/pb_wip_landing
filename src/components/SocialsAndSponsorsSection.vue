@@ -1,18 +1,16 @@
 <template>
-  <div class="section-wrapper">
+  <div class="section-wrapper" @click="onWrapperTap"> <img
+      src="../assets/images/search.png"
+      alt="Minecraft Characters"
+      class="minecraft-characters"
+    />
     <div class="text-card">
-      <img
-        src="../assets/images/search.png"
-        alt="Minecraft Characters"
-        class="minecraft-characters"
-      />
 
       <p class="social-text">
         Be on the lookout for more news on our social media!
       </p>
 
-      <!-- Each link emits its bg image index on hover; null on leave = back to 13 -->
-      <div class="social-icons-row">
+       <div class="social-icons-row">
         <a
           href="http://discord.gg/n92fmjhw8v"
           target="_blank"
@@ -91,9 +89,27 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+
 const emit = defineEmits<{
   (e: 'hover-step', step: number | null): void
 }>()
+
+const BG_STEPS = [14, 15, 16, 17, 18]
+const tapIndex = ref(-1) // -1 = default (13)
+
+const onWrapperTap = (e: MouseEvent | TouchEvent) => {
+  // Only act if the tap wasn't on a link/button — let those handle themselves
+  if ((e.target as HTMLElement).closest('a')) return
+  tapIndex.value = (tapIndex.value + 1) % (BG_STEPS.length + 1)
+  // After cycling past the last sponsor, reset to default
+  if (tapIndex.value === BG_STEPS.length) {
+    tapIndex.value = -1
+    emit('hover-step', null)
+  } else {
+    emit('hover-step', BG_STEPS[tapIndex.value])
+  }
+}
 </script>
 
 <style scoped>
@@ -103,6 +119,7 @@ const emit = defineEmits<{
   align-items: center;
   width: 100%;
   margin: auto 10vw auto 2vw;
+  position: relative;
 }
 
 .text-card {
@@ -119,12 +136,12 @@ const emit = defineEmits<{
 
 .minecraft-characters {
   position: absolute;
-  top: -260px;
+  top: -300px;
   left: 50%;
   transform: translateX(-50%);
   width: 400px;
   height: auto;
-  z-index: 10;
+  z-index: 20;
   pointer-events: none;
 }
 
@@ -201,25 +218,57 @@ const emit = defineEmits<{
 #credits p { font-size: 12px; margin: 2px 0; }
 #credits a { color: #ffffff; text-decoration: none; }
 
-@media (max-width: 768px) {
-  .minecraft-characters { width: 300px; top: -120px; }
-  .text-card     { padding-top: 160px; }
-  .social-icon   { width: 64px; }
+.tap-hint {
+  display: none;
+}
+
+@media (max-width: 999px) {
+  .section-wrapper {
+    margin: 10rem 0;
+    justify-content: center;
+  }
+
+  .text-card {
+    max-width: 95vw;
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+
+  .minecraft-characters { width: 280px; }
+
+  .social-text    { font-size: 16px; }
+  .social-icon    { width: 60px; }
   .sponsors-title { font-size: 18px; }
-  .sponsor-logo  { height: 60px; }
-  .youtrack-logo { height: 68px; }
-  .fire-logo     { height: 75px; }
+  .sponsor-logo   { height: 58px; }
+  .youtrack-logo  { height: 65px; }
+  .fire-logo      { height: 72px; }
+
+  .tap-hint {
+    display: block;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.4);
+    margin-top: 8px;
+    text-align: center;
+    pointer-events: none;
+    letter-spacing: 0.05em;
+  }
 }
 
 @media (max-width: 480px) {
-  .minecraft-characters { width: 220px; top: -90px; }
   .text-card {
-    padding-top: 130px;
-    padding-left: 20px;
-    padding-right: 20px;
+    padding-left: 16px;
+    padding-right: 16px;
   }
-  .social-text   { font-size: 16px; }
-  .social-icon   { width: 52px; }
-  .sponsor-logos { gap: 20px; }
+
+  .minecraft-characters { 
+    width: 210px; 
+    top: -155px;
+  }
+
+  .social-icon   { width: 50px; }
+  .sponsor-logos { gap: 16px; }
+  .sponsor-logo  { height: 48px; }
+  .youtrack-logo { height: 54px; }
+  .fire-logo     { height: 60px; }
 }
 </style>

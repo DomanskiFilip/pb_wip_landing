@@ -4,7 +4,12 @@
     <p v-html="currentParagraph1"></p>
     <p v-html="currentParagraph2"></p>
   </div>
-  <img v-if="stepIndex === 2" src="/src/assets/images/YOU.png" alt="We need you" style="margin: auto; max-width: 100%; height: 500px; padding-left: 15vw;" />
+  <img
+    v-if="stepIndex === 2"
+    src="/src/assets/images/YOU.png"
+    alt="We need you"
+    class="you-image"
+  />
 </template>
 
 <script setup lang="ts">
@@ -17,7 +22,7 @@ const props = defineProps<{
 
 const content = [
   {
-    title: "What?",
+    title: "What is Project Beacon?",
     paragraph1:
       'Project Beacon is a non-profit <span class="bold">community</span>  project (not affiliated with Mojang studios in any way) that aims to create a fully animated feature-length film based on the universe of Minecraft.',
     paragraph2:
@@ -54,7 +59,12 @@ const content = [
 ];
 
 const shouldShowCard = computed(() => {
-  return props.stepIndex === 1 || props.stepIndex === 3 || props.stepIndex === 5 || props.stepIndex === props.steps;
+  return (
+    props.stepIndex === 1 ||
+    props.stepIndex === 3 ||
+    props.stepIndex === 5 ||
+    props.stepIndex === props.steps
+  );
 });
 
 const currentTitle = computed(() => content[props.stepIndex - 1]?.title || "");
@@ -83,6 +93,42 @@ const currentParagraph2 = computed(
 .text-card p {
   font-size: 1.5rem;
   line-height: 1.5;
+}
+
+@media (max-width: 999px) {
+  .text-card {
+    width: 90vw;
+    max-width: 500px;
+    height: auto;
+    max-height: 85vh;
+    overflow-y: auto;
+    margin: auto;
+    padding: 1.5rem 1.2rem;
+  }
+
+  .text-card h1 {
+    font-size: 1.8rem;
+  }
+
+  .text-card p {
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+}
+
+.you-image {
+  margin: auto;
+  max-width: 100%;
+  height: 500px;
+  padding-left: 15vw;
+}
+
+@media (max-width: 999px) {
+  .you-image {
+    height: 270px;
+    padding-left: 0;
+    width: 80vw;
+  }
 }
 
 @keyframes fadeIn {
