@@ -38,7 +38,7 @@
           />
         </a>
         <a
-          href="https://www.youtube.com/@projectbeaconworld"
+          href="https://blog.projectbeacon.world/posts/"
           target="_blank"
           class="social-link"
           @mouseenter="emit('hover-step', 16)"
