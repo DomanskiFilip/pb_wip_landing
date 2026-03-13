@@ -1,16 +1,16 @@
 <template>
-  <div class="section-wrapper" @click="onWrapperTap"> <img
+  <div class="section-wrapper" @click="onWrapperTap">
+    <img
       src="../assets/images/search.png"
       alt="Minecraft Characters"
       class="minecraft-characters"
     />
     <div class="text-card">
-
       <p class="social-text">
         Be on the lookout for more news on our social media!
       </p>
 
-       <div class="social-icons-row">
+      <div class="social-icons-row">
         <a
           href="http://discord.gg/n92fmjhw8v"
           target="_blank"
@@ -18,7 +18,11 @@
           @mouseenter="emit('hover-step', 14)"
           @mouseleave="emit('hover-step', null)"
         >
-          <img src="../assets/images/discord.png" alt="Discord" class="social-icon" />
+          <img
+            src="../assets/images/discord.png"
+            alt="Discord"
+            class="social-icon"
+          />
         </a>
         <a
           href="https://www.youtube.com/@projectbeaconworld"
@@ -27,7 +31,11 @@
           @mouseenter="emit('hover-step', 15)"
           @mouseleave="emit('hover-step', null)"
         >
-          <img src="../assets/images/YouTube_icon.png" alt="YouTube" class="social-icon" />
+          <img
+            src="../assets/images/YouTube_icon.png"
+            alt="YouTube"
+            class="social-icon"
+          />
         </a>
         <a
           href="https://www.youtube.com/@projectbeaconworld"
@@ -36,7 +44,11 @@
           @mouseenter="emit('hover-step', 16)"
           @mouseleave="emit('hover-step', null)"
         >
-          <img src="../assets/images/Blog_icon.png" alt="Blog" class="social-icon" />
+          <img
+            src="../assets/images/Blog_icon.png"
+            alt="Blog"
+            class="social-icon"
+          />
         </a>
       </div>
 
@@ -49,7 +61,11 @@
             @mouseenter="emit('hover-step', 17)"
             @mouseleave="emit('hover-step', null)"
           >
-            <img src="../assets/images/YouTrack-white.png" alt="YouTrack by JetBrains" class="sponsor-logo youtrack-logo" />
+            <img
+              src="../assets/images/YouTrack-white.png"
+              alt="YouTrack by JetBrains"
+              class="sponsor-logo youtrack-logo"
+            />
           </a>
           <a
             href="https://24fire.de/?ref=beacon"
@@ -57,7 +73,11 @@
             @mouseenter="emit('hover-step', 18)"
             @mouseleave="emit('hover-step', null)"
           >
-            <img src="../assets/images/24fire-white.png" alt="24 Fire Gold Partner" class="sponsor-logo fire-logo" />
+            <img
+              src="../assets/images/24fire-white.png"
+              alt="24 Fire Gold Partner"
+              class="sponsor-logo fire-logo"
+            />
           </a>
         </div>
       </div>
@@ -68,8 +88,16 @@
           Web Development:
           <a href="https://filip.adappstudio.co.uk/" target="_blank">
             Filip Domanski
-            <svg xmlns="http://www.w3.org/2000/svg" height="12px" viewBox="0 -960 960 960" width="12px" fill="#ffffff">
-              <path d="m243-240-51-51 405-405H240v-72h480v480h-72v-357L243-240Z"/>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="12px"
+              viewBox="0 -960 960 960"
+              width="12px"
+              fill="#ffffff"
+            >
+              <path
+                d="m243-240-51-51 405-405H240v-72h480v480h-72v-357L243-240Z"
+              />
             </svg>
           </a>
         </p>
@@ -78,8 +106,16 @@
           Editorial:
           <a href="https://x.com/1m5rian" target="_blank">
             m5rian
-            <svg xmlns="http://www.w3.org/2000/svg" height="12px" viewBox="0 -960 960 960" width="12px" fill="#ffffff">
-              <path d="m243-240-51-51 405-405H240v-72h480v480h-72v-357L243-240Z"/>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="12px"
+              viewBox="0 -960 960 960"
+              width="12px"
+              fill="#ffffff"
+            >
+              <path
+                d="m243-240-51-51 405-405H240v-72h480v480h-72v-357L243-240Z"
+              />
             </svg>
           </a>
         </p>
@@ -89,27 +125,33 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref } from "vue";
 
 const emit = defineEmits<{
-  (e: 'hover-step', step: number | null): void
-}>()
+  (e: "hover-step", step: number | null): void;
+}>();
 
-const BG_STEPS = [14, 15, 16, 17, 18]
-const tapIndex = ref(-1) // -1 = default (13)
+const BG_STEPS = [14, 15, 16, 17, 18];
+const tapIndex = ref(-1); // -1 = default (13)
 
 const onWrapperTap = (e: MouseEvent | TouchEvent) => {
   // Only act if the tap wasn't on a link/button — let those handle themselves
-  if ((e.target as HTMLElement).closest('a')) return
-  tapIndex.value = (tapIndex.value + 1) % (BG_STEPS.length + 1)
+  if ((e.target as HTMLElement).closest("a")) return;
+  tapIndex.value = (tapIndex.value + 1) % (BG_STEPS.length + 1);
   // After cycling past the last sponsor, reset to default
   if (tapIndex.value === BG_STEPS.length) {
-    tapIndex.value = -1
-    emit('hover-step', null)
+    tapIndex.value = -1;
+    emit("hover-step", null);
   } else {
-    emit('hover-step', BG_STEPS[tapIndex.value])
+    const stepToSend = BG_STEPS[tapIndex.value];
+    if (stepToSend !== undefined) {
+      emit("hover-step", stepToSend);
+    } else {
+      // Fallback or handle unexpected undefined, though it shouldn't happen with the modulo logic the error trigers on build
+      emit("hover-step", null);
+    }
   }
-}
+};
 </script>
 
 <style scoped>
@@ -166,8 +208,12 @@ const onWrapperTap = (e: MouseEvent | TouchEvent) => {
   transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.social-link:hover  { transform: scale(1.15); }
-.social-link:active { transform: scale(0.9); }
+.social-link:hover {
+  transform: scale(1.15);
+}
+.social-link:active {
+  transform: scale(0.9);
+}
 
 .social-icon {
   width: 80px;
@@ -202,12 +248,24 @@ const onWrapperTap = (e: MouseEvent | TouchEvent) => {
   transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.sponsor-logos a:hover  { transform: scale(1.1); }
-.sponsor-logos a:active { transform: scale(0.9); }
+.sponsor-logos a:hover {
+  transform: scale(1.1);
+}
+.sponsor-logos a:active {
+  transform: scale(0.9);
+}
 
-.sponsor-logo  { height: 70px; width: auto; object-fit: contain; }
-.youtrack-logo { height: 80px; }
-.fire-logo     { height: 90px; }
+.sponsor-logo {
+  height: 70px;
+  width: auto;
+  object-fit: contain;
+}
+.youtrack-logo {
+  height: 80px;
+}
+.fire-logo {
+  height: 90px;
+}
 
 #credits {
   width: 100%;
@@ -215,8 +273,14 @@ const onWrapperTap = (e: MouseEvent | TouchEvent) => {
   padding-top: 16px;
 }
 
-#credits p { font-size: 12px; margin: 2px 0; }
-#credits a { color: #ffffff; text-decoration: none; }
+#credits p {
+  font-size: 12px;
+  margin: 2px 0;
+}
+#credits a {
+  color: #ffffff;
+  text-decoration: none;
+}
 
 .tap-hint {
   display: none;
@@ -234,14 +298,28 @@ const onWrapperTap = (e: MouseEvent | TouchEvent) => {
     overflow-y: auto;
   }
 
-  .minecraft-characters { width: 280px; }
+  .minecraft-characters {
+    width: 280px;
+  }
 
-  .social-text    { font-size: 16px; }
-  .social-icon    { width: 60px; }
-  .sponsors-title { font-size: 18px; }
-  .sponsor-logo   { height: 58px; }
-  .youtrack-logo  { height: 65px; }
-  .fire-logo      { height: 72px; }
+  .social-text {
+    font-size: 16px;
+  }
+  .social-icon {
+    width: 60px;
+  }
+  .sponsors-title {
+    font-size: 18px;
+  }
+  .sponsor-logo {
+    height: 58px;
+  }
+  .youtrack-logo {
+    height: 65px;
+  }
+  .fire-logo {
+    height: 72px;
+  }
 
   .tap-hint {
     display: block;
@@ -260,15 +338,25 @@ const onWrapperTap = (e: MouseEvent | TouchEvent) => {
     padding-right: 16px;
   }
 
-  .minecraft-characters { 
-    width: 210px; 
+  .minecraft-characters {
+    width: 210px;
     top: -155px;
   }
 
-  .social-icon   { width: 50px; }
-  .sponsor-logos { gap: 16px; }
-  .sponsor-logo  { height: 48px; }
-  .youtrack-logo { height: 54px; }
-  .fire-logo     { height: 60px; }
+  .social-icon {
+    width: 50px;
+  }
+  .sponsor-logos {
+    gap: 16px;
+  }
+  .sponsor-logo {
+    height: 48px;
+  }
+  .youtrack-logo {
+    height: 54px;
+  }
+  .fire-logo {
+    height: 60px;
+  }
 }
 </style>
