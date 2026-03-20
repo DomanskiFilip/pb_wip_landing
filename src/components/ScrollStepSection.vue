@@ -33,7 +33,7 @@ const currentStep = ref(props.start);
 const isActive = ref(false);
 
 const exitAttempts = ref(0);
-const EXIT_THRESHOLD = 25;
+const EXIT_THRESHOLD = 25; 
 let locked = false;
 
 const hasSteps = computed(() => props.start !== props.end);
@@ -53,7 +53,6 @@ const step = (dir: 1 | -1) => {
   }
 };
 
-// Wheel Handler
 const handleWheel = (e: WheelEvent) => {
   if (!isActive.value || !hasSteps.value) return;
 
@@ -66,7 +65,6 @@ const handleWheel = (e: WheelEvent) => {
     if (!isAtEnd) {
       e.preventDefault();
       step(1);
-      exitAttempts.value = 0;
       return;
     } else {
       if (exitAttempts.value < EXIT_THRESHOLD) {
@@ -74,14 +72,11 @@ const handleWheel = (e: WheelEvent) => {
         exitAttempts.value++;
         return;
       }
-      // Threshold hit: Allow scroll to Socials
     }
-  } 
-
-  else if (scrollingUp) {
-    if (isAtStart) {
-      return; 
-    }
+  } else if (scrollingUp) {
+    // RELEASE VALVE: If at the first image and scrolling up, don't preventDefault
+    // This allows the user to scroll back up to previous sections.
+    if (isAtStart) return;
 
     e.preventDefault();
     exitAttempts.value = 0;
@@ -89,15 +84,16 @@ const handleWheel = (e: WheelEvent) => {
   }
 };
 
-// Touch Logic for Mobile
+// Touch logic with TS safety fixes
 let touchStartY = 0;
 const handleTouchStart = (e: TouchEvent) => {
-  touchStartY = e.touches[0].clientY;
+  touchStartY = e.touches[0]?.clientY ?? 0;
 };
 
 const handleTouchMove = (e: TouchEvent) => {
   if (!isActive.value) return;
-  const delta = touchStartY - e.touches[0].clientY;
+  const currentY = e.touches[0]?.clientY ?? 0;
+  const delta = touchStartY - currentY;
   const isAtEnd = currentStep.value === props.end;
 
   if (!isAtEnd || (isAtEnd && delta > 0 && exitAttempts.value < 2)) {
@@ -106,16 +102,18 @@ const handleTouchMove = (e: TouchEvent) => {
 };
 
 const handleTouchEnd = (e: TouchEvent) => {
-  const delta = touchStartY - e.changedTouches[0].clientY;
+  const touchEndY = e.changedTouches[0]?.clientY ?? 0;
+  const delta = touchStartY - touchEndY;
+
   if (Math.abs(delta) < 40) return;
 
-  if (delta > 0) {
+  if (delta > 0) { // Scrolling Down
     if (currentStep.value < props.end) {
       step(1);
     } else {
       exitAttempts.value++;
     }
-  } else {
+  } else { // Scrolling Up
     if (currentStep.value > props.start) {
       step(-1);
       exitAttempts.value = 0;
@@ -127,9 +125,10 @@ onMounted(() => {
   const observer = new IntersectionObserver(
     (entries) => {
       const entry = entries[0];
+      if (!entry) return; // Guard against undefined entry
       isActive.value = entry.isIntersecting;
       if (entry.isIntersecting) {
-        exitAttempts.value = 0; 
+        exitAttempts.value = 0;
       }
     },
     { threshold: 0.5 }
@@ -138,9 +137,9 @@ onMounted(() => {
   if (sectionRef.value) observer.observe(sectionRef.value);
 
   window.addEventListener("wheel", handleWheel, { passive: false });
-  sectionRef.value?.addEventListener("touchstart", handleTouchStart);
+  sectionRef.value?.addEventListener("touchstart", handleTouchStart, { passive: true });
   sectionRef.value?.addEventListener("touchmove", handleTouchMove, { passive: false });
-  sectionRef.value?.addEventListener("touchend", handleTouchEnd);
+  sectionRef.value?.addEventListener("touchend", handleTouchEnd, { passive: true });
 
   onUnmounted(() => {
     observer.disconnect();
@@ -150,6 +149,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* Keeping your existing styles... */
 .scroll-wrapper {
   height: 100vh;
   width: 100vw;
@@ -184,20 +184,10 @@ onMounted(() => {
   justify-content: right;
   overflow: visible;
 }
-.content-layer.align-left {
-  left: 0;
-  right: auto;
-}
-.content-layer.align-center {
-  left: 0;
-  right: 0;
-  margin: 0 auto;
-  margin-top: 2rem;
-}
-.content-layer.align-right {
-  left: auto;
-  right: 0;
-}
+.content-layer.align-left { left: 0; right: auto; }
+.content-layer.align-center { left: 0; right: 0; margin: 0 auto; margin-top: 2rem; }
+.content-layer.align-right { left: auto; right: 0; }
+
 ::v-deep(.text-card) {
   display: flex;
   flex-direction: column;
@@ -212,28 +202,18 @@ onMounted(() => {
   transition: all 0.3s ease-in-out;
   color: white;
 }
-::v-deep(.text-card) h1 {
-  font-size: 2.5rem;
-}
-::v-deep(.text-card) p {
-  margin: 1rem 0;
-  font-size: 1.2rem;
-}
 
-/* Tap hint — hidden on desktop, shown on touch devices */
 .tap-hint {
   display: none;
   position: absolute;
-  bottom: 8rem; /* above the nav bar */
+  bottom: 8rem;
   left: 50%;
   transform: translateX(-50%);
   font-size: 11px;
   color: rgba(255, 255, 255, 0.4);
   text-align: center;
   pointer-events: none;
-  letter-spacing: 0.05em;
   z-index: 20;
-  white-space: nowrap;
 }
 
 @media (max-width: 999px) {
@@ -241,24 +221,13 @@ onMounted(() => {
     left: 0 !important;
     right: 0 !important;
     width: 100% !important;
-    margin: 0 auto;
     justify-content: center;
     align-items: center;
     padding: 1rem;
-    overflow-y: auto;
-  }
-  ::v-deep(.text-card) h1 {
-    font-size: 1.8rem;
-  }
-  ::v-deep(.text-card) p {
-    font-size: 1rem;
   }
 }
 
 @media (hover: none) {
-  /* Only show tap hint on actual touch devices */
-  .tap-hint {
-    display: block;
-  }
+  .tap-hint { display: block; }
 }
 </style>
