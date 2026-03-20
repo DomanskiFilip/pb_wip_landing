@@ -1,20 +1,17 @@
 <template>
   <section ref="sectionRef" class="scroll-wrapper snap-point">
-    <!-- Background -->
     <div class="bg-layer">
       <img
-        v-for="n in totalImages"
+        v-for="n in imageCount"
         :key="n"
         :src="getImageUrl(n)"
-        :class="{ active: activeStep === n || (!hasSteps && n === start) }"
+        :class="{ active: activeStep === n || (!hasSteps && n === props.start) }"
         alt="background"
       />
     </div>
-    <!-- Foreground -->
     <div class="content-layer" :class="`align-${align}`">
       <slot :stepIndex="currentStep - start + 1" :steps="end - start + 1" />
     </div>
-    <!-- Mobile only: tap hint, only when there are steps to cycle through -->
     <p v-if="hasSteps" class="tap-hint">Tap to change background</p>
   </section>
 </template>
@@ -30,10 +27,13 @@ const props = defineProps<{
   overrideStep?: number | null;
 }>();
 
-const totalImages = props.totalImages ?? 18;
+const imageCount = computed(() => props.totalImages ?? 18);
 const sectionRef = ref<HTMLElement | null>(null);
 const currentStep = ref(props.start);
 const isActive = ref(false);
+
+const exitAttempts = ref(0);
+const EXIT_THRESHOLD = 25;
 let locked = false;
 
 const hasSteps = computed(() => props.start !== props.end);
@@ -43,93 +43,108 @@ const getImageUrl = (n: number) =>
   new URL(`../assets/images/${n}.png`, import.meta.url).href;
 
 const step = (dir: 1 | -1) => {
-  if (!isActive.value || !hasSteps.value) return;
-  if (dir > 0 && currentStep.value === props.end) return;
-  if (dir < 0 && currentStep.value === props.start) return;
   if (locked) return;
-  locked = true;
-  currentStep.value += dir;
-  setTimeout(() => (locked = false), 500);
+  const next = currentStep.value + dir;
+  if (next >= props.start && next <= props.end) {
+    currentStep.value = next;
+    locked = true;
+    exitAttempts.value = 0;
+    setTimeout(() => (locked = false), 400);
+  }
 };
 
-// ── Wheel
+// Wheel Handler
 const handleWheel = (e: WheelEvent) => {
   if (!isActive.value || !hasSteps.value) return;
-  if (e.deltaY > 0 && currentStep.value === props.end) return;
-  if (e.deltaY < 0 && currentStep.value === props.start) return;
-  e.preventDefault();
-  step(e.deltaY > 0 ? 1 : -1);
+
+  const scrollingDown = e.deltaY > 0;
+  const scrollingUp = e.deltaY < 0;
+  const isAtEnd = currentStep.value === props.end;
+  const isAtStart = currentStep.value === props.start;
+
+  if (scrollingDown) {
+    if (!isAtEnd) {
+      e.preventDefault();
+      step(1);
+      exitAttempts.value = 0;
+      return;
+    } else {
+      if (exitAttempts.value < EXIT_THRESHOLD) {
+        e.preventDefault();
+        exitAttempts.value++;
+        return;
+      }
+      // Threshold hit: Allow scroll to Socials
+    }
+  } 
+
+  else if (scrollingUp) {
+    if (isAtStart) {
+      return; 
+    }
+
+    e.preventDefault();
+    exitAttempts.value = 0;
+    step(-1);
+  }
 };
 
-// ── Touch swipe
+// Touch Logic for Mobile
 let touchStartY = 0;
-let touchDeltaY = 0;
-let isStepping = false;
-
 const handleTouchStart = (e: TouchEvent) => {
-  if (!isActive.value || !hasSteps.value) return;
-  touchStartY = e.touches[0]?.clientY ?? 0;
-  touchDeltaY = 0;
-  isStepping = false;
+  touchStartY = e.touches[0].clientY;
 };
 
 const handleTouchMove = (e: TouchEvent) => {
-  if (!isActive.value || !hasSteps.value) return;
-  touchDeltaY = touchStartY - (e.touches[0]?.clientY ?? 0);
-  if (!isStepping && Math.abs(touchDeltaY) > 15) {
-    const dir = touchDeltaY > 0 ? 1 : -1;
-    const canStep =
-      (dir > 0 && currentStep.value < props.end) ||
-      (dir < 0 && currentStep.value > props.start);
-    if (canStep) isStepping = true;
+  if (!isActive.value) return;
+  const delta = touchStartY - e.touches[0].clientY;
+  const isAtEnd = currentStep.value === props.end;
+
+  if (!isAtEnd || (isAtEnd && delta > 0 && exitAttempts.value < 2)) {
+    if (e.cancelable) e.preventDefault();
   }
-  if (isStepping && e.cancelable) e.preventDefault();
 };
 
-const handleTouchEnd = () => {
-  if (!isStepping || Math.abs(touchDeltaY) < 30) return;
-  step(touchDeltaY > 0 ? 1 : -1);
-  isStepping = false;
-};
+const handleTouchEnd = (e: TouchEvent) => {
+  const delta = touchStartY - e.changedTouches[0].clientY;
+  if (Math.abs(delta) < 40) return;
 
-// ── Tap (mobile, no swipe)
-const handleTap = (e: MouseEvent) => {
-  if (!hasSteps.value) return;
-  if (isStepping) return;
-  if ((e.target as HTMLElement).closest("a, button")) return;
-  if (!window.matchMedia("(hover: none)").matches) return;
-  step(1);
+  if (delta > 0) {
+    if (currentStep.value < props.end) {
+      step(1);
+    } else {
+      exitAttempts.value++;
+    }
+  } else {
+    if (currentStep.value > props.start) {
+      step(-1);
+      exitAttempts.value = 0;
+    }
+  }
 };
 
 onMounted(() => {
   const observer = new IntersectionObserver(
     (entries) => {
       const entry = entries[0];
-      if (!entry) return;
       isActive.value = entry.isIntersecting;
+      if (entry.isIntersecting) {
+        exitAttempts.value = 0; 
+      }
     },
-    { threshold: 0.95 },
+    { threshold: 0.5 }
   );
+
   if (sectionRef.value) observer.observe(sectionRef.value);
-  const container = document.getElementById("main-scroll-container");
-  container?.addEventListener("wheel", handleWheel, { passive: false });
-  sectionRef.value?.addEventListener("touchstart", handleTouchStart, {
-    passive: true,
-  });
-  sectionRef.value?.addEventListener("touchmove", handleTouchMove, {
-    passive: false,
-  });
-  sectionRef.value?.addEventListener("touchend", handleTouchEnd, {
-    passive: true,
-  });
-  sectionRef.value?.addEventListener("click", handleTap);
+
+  window.addEventListener("wheel", handleWheel, { passive: false });
+  sectionRef.value?.addEventListener("touchstart", handleTouchStart);
+  sectionRef.value?.addEventListener("touchmove", handleTouchMove, { passive: false });
+  sectionRef.value?.addEventListener("touchend", handleTouchEnd);
+
   onUnmounted(() => {
     observer.disconnect();
-    container?.removeEventListener("wheel", handleWheel);
-    sectionRef.value?.removeEventListener("touchstart", handleTouchStart);
-    sectionRef.value?.removeEventListener("touchmove", handleTouchMove);
-    sectionRef.value?.removeEventListener("touchend", handleTouchEnd);
-    sectionRef.value?.removeEventListener("click", handleTap);
+    window.removeEventListener("wheel", handleWheel);
   });
 });
 </script>
