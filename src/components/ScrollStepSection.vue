@@ -37,7 +37,6 @@ const isActive = ref(false);
 let locked = false;
 
 const hasSteps = computed(() => props.start !== props.end);
-// Use overrideStep when provided, otherwise use scroll-driven currentStep
 const activeStep = computed(() => props.overrideStep ?? currentStep.value);
 
 const getImageUrl = (n: number) =>
@@ -45,42 +44,40 @@ const getImageUrl = (n: number) =>
 
 const step = (dir: 1 | -1) => {
   if (!isActive.value || !hasSteps.value) return;
-  if (dir > 0 && currentStep.value === props.end)   return;
+  if (dir > 0 && currentStep.value === props.end) return;
   if (dir < 0 && currentStep.value === props.start) return;
   if (locked) return;
   locked = true;
   currentStep.value += dir;
-  setTimeout(() => (locked = false), 120);
+  setTimeout(() => (locked = false), 1000);
 };
 
-// ── Wheel ────────────────────────────────────────────────────────────────────
+// ── Wheel
 const handleWheel = (e: WheelEvent) => {
   if (!isActive.value || !hasSteps.value) return;
-  if (e.deltaY > 0 && currentStep.value === props.end)   return;
+  if (e.deltaY > 0 && currentStep.value === props.end) return;
   if (e.deltaY < 0 && currentStep.value === props.start) return;
   e.preventDefault();
   step(e.deltaY > 0 ? 1 : -1);
 };
 
-// ── Touch swipe ──────────────────────────────────────────────────────────────
-// Call preventDefault on touchmove (cancelable) so the browser never starts a
-// scroll gesture. touchend is passive — never preventDefault there.
+// ── Touch swipe
 let touchStartY = 0;
 let touchDeltaY = 0;
-let isStepping  = false;
+let isStepping = false;
 
 const handleTouchStart = (e: TouchEvent) => {
   if (!isActive.value || !hasSteps.value) return;
   touchStartY = e.touches[0]?.clientY ?? 0;
   touchDeltaY = 0;
-  isStepping  = false;
+  isStepping = false;
 };
 
 const handleTouchMove = (e: TouchEvent) => {
   if (!isActive.value || !hasSteps.value) return;
   touchDeltaY = touchStartY - (e.touches[0]?.clientY ?? 0);
   if (!isStepping && Math.abs(touchDeltaY) > 15) {
-    const dir     = touchDeltaY > 0 ? 1 : -1;
+    const dir = touchDeltaY > 0 ? 1 : -1;
     const canStep =
       (dir > 0 && currentStep.value < props.end) ||
       (dir < 0 && currentStep.value > props.start);
@@ -95,16 +92,12 @@ const handleTouchEnd = () => {
   isStepping = false;
 };
 
-// ── Tap (mobile, no swipe) ───────────────────────────────────────────────────
-// If the user taps without swiping, advance one step forward (wrap at end).
+// ── Tap (mobile, no swipe)
 const handleTap = (e: MouseEvent) => {
   if (!hasSteps.value) return;
-  // Ignore if this click was triggered by a touch that already swiped
   if (isStepping) return;
-  // Don't intercept clicks on interactive children
-  if ((e.target as HTMLElement).closest('a, button')) return;
-  // On desktop the wheel handles everything; only act on touch devices
-  if (!window.matchMedia('(hover: none)').matches) return;
+  if ((e.target as HTMLElement).closest("a, button")) return;
+  if (!window.matchMedia("(hover: none)").matches) return;
   step(1);
 };
 
@@ -120,17 +113,23 @@ onMounted(() => {
   if (sectionRef.value) observer.observe(sectionRef.value);
   const container = document.getElementById("main-scroll-container");
   container?.addEventListener("wheel", handleWheel, { passive: false });
-  sectionRef.value?.addEventListener("touchstart", handleTouchStart, { passive: true });
-  sectionRef.value?.addEventListener("touchmove",  handleTouchMove,  { passive: false });
-  sectionRef.value?.addEventListener("touchend",   handleTouchEnd,   { passive: true });
-  sectionRef.value?.addEventListener("click",      handleTap);
+  sectionRef.value?.addEventListener("touchstart", handleTouchStart, {
+    passive: true,
+  });
+  sectionRef.value?.addEventListener("touchmove", handleTouchMove, {
+    passive: false,
+  });
+  sectionRef.value?.addEventListener("touchend", handleTouchEnd, {
+    passive: true,
+  });
+  sectionRef.value?.addEventListener("click", handleTap);
   onUnmounted(() => {
     observer.disconnect();
     container?.removeEventListener("wheel", handleWheel);
     sectionRef.value?.removeEventListener("touchstart", handleTouchStart);
-    sectionRef.value?.removeEventListener("touchmove",  handleTouchMove);
-    sectionRef.value?.removeEventListener("touchend",   handleTouchEnd);
-    sectionRef.value?.removeEventListener("click",      handleTap);
+    sectionRef.value?.removeEventListener("touchmove", handleTouchMove);
+    sectionRef.value?.removeEventListener("touchend", handleTouchEnd);
+    sectionRef.value?.removeEventListener("click", handleTap);
   });
 });
 </script>
@@ -233,12 +232,18 @@ onMounted(() => {
     padding: 1rem;
     overflow-y: auto;
   }
-  ::v-deep(.text-card) h1 { font-size: 1.8rem; }
-  ::v-deep(.text-card) p  { font-size: 1rem; }
+  ::v-deep(.text-card) h1 {
+    font-size: 1.8rem;
+  }
+  ::v-deep(.text-card) p {
+    font-size: 1rem;
+  }
 }
 
 @media (hover: none) {
   /* Only show tap hint on actual touch devices */
-  .tap-hint { display: block; }
+  .tap-hint {
+    display: block;
+  }
 }
 </style>
