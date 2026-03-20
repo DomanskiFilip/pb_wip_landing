@@ -49,7 +49,7 @@ const step = (dir: 1 | -1) => {
   if (locked) return;
   locked = true;
   currentStep.value += dir;
-  setTimeout(() => (locked = false), 1000);
+  setTimeout(() => (locked = false), 500);
 };
 
 // ── Wheel
