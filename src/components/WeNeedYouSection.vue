@@ -60,7 +60,8 @@ const content = [
 
 const shouldShowCard = computed(() => {
   return (
-    props.stepIndex === 1 || props.stepIndex === 3 || props.stepIndex === 5
+    props.stepIndex === 1 || props.stepIndex === 3 || props.stepIndex === 5 ||
+    props.stepIndex === props.steps
   );
 });
 
