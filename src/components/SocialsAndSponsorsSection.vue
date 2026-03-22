@@ -300,6 +300,7 @@ const onWrapperTap = (e: MouseEvent | TouchEvent) => {
 
   .minecraft-characters {
     width: 280px;
+    top: -210px;
   }
 
   .social-text {
