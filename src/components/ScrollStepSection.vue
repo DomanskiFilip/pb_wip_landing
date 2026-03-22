@@ -34,7 +34,9 @@ const isActive = ref(false);
 
 const exitAttempts = ref(0);
 const EXIT_THRESHOLD = 10; 
-let locked = false;
+let lastStepTime = 0;
+const COOLDOWN_MS = 400;
+
 
 const hasSteps = computed(() => props.start !== props.end);
 const activeStep = computed(() => props.overrideStep ?? currentStep.value);
@@ -43,18 +45,20 @@ const getImageUrl = (n: number) =>
   new URL(`../assets/images/${n}.png`, import.meta.url).href;
 
 const step = (dir: 1 | -1) => {
-  if (locked) return;
+  const now = Date.now();
+  if (now - lastStepTime < COOLDOWN_MS) return;  // timestamp check instead
+  
   const next = currentStep.value + dir;
   if (next >= props.start && next <= props.end) {
     currentStep.value = next;
-    locked = true;
+    lastStepTime = now;  // record when step happened
     exitAttempts.value = 0;
-    setTimeout(() => (locked = false), 400);
   }
 };
 
 const handleWheel = (e: WheelEvent) => {
   if (!isActive.value || !hasSteps.value) return;
+  if (Math.abs(e.deltaY) < 10) return; // ignore tiny movements
 
   const scrollingDown = e.deltaY > 0;
   const scrollingUp = e.deltaY < 0;
