@@ -123,7 +123,7 @@ const currentParagraph2 = computed(
 
 @media (max-width: 999px) {
   .you-image {
-    height: 270px;
+    height: 500px;
     padding-left: 0;
     width: 80vw;
   }
@@ -135,6 +135,12 @@ const currentParagraph2 = computed(
   }
   to {
     opacity: 1;
+  }
+}
+
+@media (max-width: 500px) {
+  .you-image {
+    height: 250px;
   }
 }
 
