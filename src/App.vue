@@ -87,7 +87,6 @@ function getCurrentSnappedIndex(): number {
   if (!container) return 0;
   const children = Array.from(container.children) as HTMLElement[];
   const scrollTop = container.scrollTop;
-  const height = container.clientHeight;
   let closest = 0;
   let minDist = Infinity;
   children.forEach((child, i) => {
