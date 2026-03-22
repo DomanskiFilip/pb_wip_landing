@@ -12,6 +12,7 @@
       v-slot="{ stepIndex, steps }"
       align="right"
       data-section="about"
+      ref="weNeedYouRef"
     >
       <WeNeedYouSection :stepIndex="stepIndex" :steps="steps" />
     </ScrollStepSection>
@@ -22,12 +23,17 @@
       align="left"
       data-section="socials"
       :overrideStep="socialsHoverStep"
+      ref="socialsRef"
     >
       <SocialsAndSponsorsSection @hover-step="socialsHoverStep = $event" />
     </ScrollStepSection>
   </main>
 
   <nav class="section-nav">
+    <button class="nav-arrow" @click="navigateUp" aria-label="Previous">
+      ▲
+    </button>
+
     <button
       v-for="section in sections"
       :key="section.id"
@@ -36,6 +42,10 @@
       @click="scrollToSection(section.scrollIndex)"
     >
       <span class="nav-label">{{ section.label }}</span>
+    </button>
+
+    <button class="nav-arrow" @click="navigateDown" aria-label="Next">
+      ▼
     </button>
   </nav>
 
@@ -60,14 +70,81 @@ const sections = [
 ];
 
 const activeSection = ref("banner");
-// Driven by hovering links in SocialsAndSponsorsSection; null = use default (13)
 const socialsHoverStep = ref<number | null>(null);
+const weNeedYouRef = ref<InstanceType<typeof ScrollStepSection> | null>(null);
+const socialsRef = ref<InstanceType<typeof ScrollStepSection> | null>(null);
 
 function scrollToSection(index: number) {
   const container = document.getElementById("main-scroll-container");
   if (!container) return;
   const target = container.children[index] as HTMLElement;
   if (target) target.scrollIntoView({ behavior: "smooth" });
+}
+
+// Returns which scroll-container child index is currently snapped
+function getCurrentSnappedIndex(): number {
+  const container = document.getElementById("main-scroll-container");
+  if (!container) return 0;
+  const children = Array.from(container.children) as HTMLElement[];
+  const scrollTop = container.scrollTop;
+  const height = container.clientHeight;
+  let closest = 0;
+  let minDist = Infinity;
+  children.forEach((child, i) => {
+    const dist = Math.abs(child.offsetTop - scrollTop);
+    if (dist < minDist) { minDist = dist; closest = i; }
+  });
+  return closest;
+}
+
+function navigateDown() {
+  const snapped = getCurrentSnappedIndex();
+  const container = document.getElementById("main-scroll-container");
+  if (!container) return;
+  const children = Array.from(container.children) as HTMLElement[];
+
+  // Section 2 (scrollIndex 2) = WeNeedYou, has steps 2–12
+  if (snapped === 2 && weNeedYouRef.value) {
+    const advanced = weNeedYouRef.value.tryStep(1);
+    if (advanced) return;
+  }
+
+  // Section 3 (scrollIndex 3) = Socials, has steps 13–18
+  if (snapped === 3 && socialsRef.value) {
+    const advanced = socialsRef.value.tryStep(1);
+    if (advanced) return;
+  }
+
+  // Otherwise scroll to next snap section
+  const next = snapped + 1;
+  if (next < children.length) {
+    (children[next] as HTMLElement).scrollIntoView({ behavior: "smooth" });
+  }
+}
+
+function navigateUp() {
+  const snapped = getCurrentSnappedIndex();
+  const container = document.getElementById("main-scroll-container");
+  if (!container) return;
+  const children = Array.from(container.children) as HTMLElement[];
+
+  // Section 2 = WeNeedYou
+  if (snapped === 2 && weNeedYouRef.value) {
+    const retreated = weNeedYouRef.value.tryStep(-1);
+    if (retreated) return;
+  }
+
+  // Section 3 = Socials
+  if (snapped === 3 && socialsRef.value) {
+    const retreated = socialsRef.value.tryStep(-1);
+    if (retreated) return;
+  }
+
+  // Otherwise scroll to previous snap section
+  const prev = snapped - 1;
+  if (prev >= 0) {
+    (children[prev] as HTMLElement).scrollIntoView({ behavior: "smooth" });
+  }
 }
 
 function onScroll() {
@@ -77,8 +154,7 @@ function onScroll() {
   const height = container.clientHeight;
   const children = Array.from(container.children) as HTMLElement[];
 
-  const bannerBottom =
-    (children[0]?.offsetTop ?? 0) + (children[0]?.offsetHeight ?? 0);
+  const bannerBottom = (children[0]?.offsetTop ?? 0) + (children[0]?.offsetHeight ?? 0);
   const socialsTop = children[3]?.offsetTop ?? Infinity;
 
   if (scrollTop + height / 2 < bannerBottom) {
@@ -167,6 +243,23 @@ onUnmounted(() => {
 .nav-item.active .nav-label {
   color: #ffffff;
   font-size: 0.72rem;
+}
+
+.nav-arrow {
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.55rem;
+  line-height: 1;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+.nav-arrow:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.07);
 }
 
 footer {

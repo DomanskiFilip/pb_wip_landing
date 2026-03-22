@@ -122,6 +122,17 @@ const handleTouchEnd = (e: TouchEvent) => {
   }
 };
 
+function tryStep(dir: 1 | -1): boolean {
+  const next = currentStep.value + dir;
+  if (next >= props.start && next <= props.end) {
+    step(dir);
+    return true;
+  }
+  return false;
+}
+
+defineExpose({ tryStep });
+
 onMounted(() => {
   const observer = new IntersectionObserver(
     (entries) => {
