@@ -33,7 +33,7 @@ const currentStep = ref(props.start);
 const isActive = ref(false);
 
 const exitAttempts = ref(0);
-const EXIT_THRESHOLD = 25; 
+const EXIT_THRESHOLD = 10; 
 let locked = false;
 
 const hasSteps = computed(() => props.start !== props.end);
@@ -74,8 +74,6 @@ const handleWheel = (e: WheelEvent) => {
       }
     }
   } else if (scrollingUp) {
-    // RELEASE VALVE: If at the first image and scrolling up, don't preventDefault
-    // This allows the user to scroll back up to previous sections.
     if (isAtStart) return;
 
     e.preventDefault();
@@ -84,7 +82,6 @@ const handleWheel = (e: WheelEvent) => {
   }
 };
 
-// Touch logic with TS safety fixes
 let touchStartY = 0;
 const handleTouchStart = (e: TouchEvent) => {
   touchStartY = e.touches[0]?.clientY ?? 0;
@@ -125,7 +122,7 @@ onMounted(() => {
   const observer = new IntersectionObserver(
     (entries) => {
       const entry = entries[0];
-      if (!entry) return; // Guard against undefined entry
+      if (!entry) return;
       isActive.value = entry.isIntersecting;
       if (entry.isIntersecting) {
         exitAttempts.value = 0;
