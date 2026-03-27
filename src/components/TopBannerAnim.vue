@@ -16,7 +16,7 @@
       Your browser does not support the video tag.
     </video>
     <img :src="banner_title" alt="Banner Title Image" />
-    <h3 class="coming-soon">comming soon...</h3>
+    <h3 class="coming-soon">coming soon...</h3>
   </div>
 </template>
 
@@ -97,14 +97,14 @@ img {
   left: 66%;
   z-index: 3;
   display: inline-block;
-  color: hsl(300, 81%, 62%);
+  color: hsl(66, 100%, 50%);
   font-size: 2rem;
   font-weight: 500;
   text-align: center;
   padding: 0.35em 0.9em;
   letter-spacing: 0.06em;
   transform-origin: center;
-  transform: translate(-50%, -50%) rotate(333303deg);
+  transform: translate(-50%, -50%) rotate(330deg);
   animation: coming-pulse 1.6s ease-in-out infinite;
   pointer-events: none;
 }
