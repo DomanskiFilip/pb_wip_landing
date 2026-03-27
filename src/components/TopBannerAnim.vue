@@ -16,13 +16,14 @@
       Your browser does not support the video tag.
     </video>
     <img :src="banner_title" alt="Banner Title Image" />
+    <h3 class="coming-soon">comming soon...</h3>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import banner from '../assets/videos/Banner.mp4';
-import banner_title from '../assets/images/banner-title.png';
+import { ref } from "vue";
+import banner from "../assets/videos/Banner.mp4";
+import banner_title from "../assets/images/banner-title.png";
 
 const videoReady = ref(false);
 
@@ -48,7 +49,7 @@ function onCanPlay() {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('../assets/images/18.png');
+  background-image: url("../assets/images/firstframe.png");
   background-size: cover;
   background-position: center;
   z-index: 1;
@@ -84,15 +85,58 @@ img {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 2; /* bumped above placeholder */
+  z-index: 2;
   width: 50%;
   height: 35%;
+  pointer-events: none;
+}
+
+.coming-soon {
+  position: absolute;
+  top: 63%;
+  left: 66%;
+  z-index: 3;
+  display: inline-block;
+  color: hsl(300, 81%, 62%);
+  font-size: 2rem;
+  font-weight: 500;
+  text-align: center;
+  padding: 0.35em 0.9em;
+  letter-spacing: 0.06em;
+  transform-origin: center;
+  transform: translate(-50%, -50%) rotate(333303deg);
+  animation: coming-pulse 1.6s ease-in-out infinite;
+  pointer-events: none;
 }
 
 @media (max-width: 999px) {
   img {
     width: 85%;
     height: auto;
+  }
+
+  .coming-soon {
+    font-size: 1.25rem;
+    top: 68%;
+    left: 72%;
+    padding: 0.25em 0.6em;
+    transform: translate(-50%, -50%) rotate(330deg) scale(0.92);
+  }
+}
+
+/* Pulsating animation that scales */
+@keyframes coming-pulse {
+  0% {
+    transform: translate(-50%, -50%) rotate(330deg) scale(1);
+    opacity: 0.95;
+  }
+  50% {
+    transform: translate(-50%, -50%) rotate(330deg) scale(1.12);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(330deg) scale(1);
+    opacity: 0.95;
   }
 }
 </style>

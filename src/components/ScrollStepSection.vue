@@ -33,7 +33,7 @@ const currentStep = ref(props.start);
 const isActive = ref(false);
 
 const exitAttempts = ref(0);
-const EXIT_THRESHOLD = 10; 
+const EXIT_THRESHOLD = 3; 
 let lastStepTime = 0;
 const COOLDOWN_MS = 400;
 
