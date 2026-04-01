@@ -2,22 +2,22 @@
   <section ref="sectionRef" class="scroll-wrapper snap-point">
     <div class="bg-layer">
       <img
-        v-for="n in imageCount"
-        :key="n"
-        :src="getImageUrl(n)"
-        :class="{ active: activeStep === n || (!hasSteps && n === props.start) }"
-        alt="background"
+          v-for="n in imageCount"
+          :key="n"
+          :src="getImageUrl(n)"
+          :class="{ active: activeStep === n || (!hasSteps && n === props.start) }"
+          alt="background"
       />
     </div>
     <div class="content-layer" :class="`align-${align}`">
-      <slot :stepIndex="currentStep - start + 1" :steps="end - start + 1" />
+      <slot :stepIndex="currentStep - start + 1" :steps="end - start + 1"/>
     </div>
     <p v-if="hasSteps" class="tap-hint">Tap to change background</p>
   </section>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from "vue";
+import {computed, onMounted, onUnmounted, ref} from "vue"
 
 const props = defineProps<{
   start: number;
@@ -25,139 +25,159 @@ const props = defineProps<{
   totalImages?: number;
   align?: "left" | "center" | "right";
   overrideStep?: number | null;
-}>();
+}>()
 
-const imageCount = computed(() => props.totalImages ?? 18);
-const sectionRef = ref<HTMLElement | null>(null);
-const currentStep = ref(props.start);
-const isActive = ref(false);
+const imageCount = computed(() => props.totalImages ?? 18)
+const sectionRef = ref<HTMLElement | null>(null)
+const currentStep = ref(props.start)
+const isActive = ref(false)
 
-const exitAttempts = ref(0);
-const EXIT_THRESHOLD = 3; 
-let lastStepTime = 0;
-const COOLDOWN_MS = 400;
+const exitAttempts = ref(0)
+const EXIT_THRESHOLD = 3
+let lastStepTime = 0
+const COOLDOWN_MS = 400
 
 
-const hasSteps = computed(() => props.start !== props.end);
-const activeStep = computed(() => props.overrideStep ?? currentStep.value);
+const hasSteps = computed(() => props.start !== props.end)
+const activeStep = computed(() => props.overrideStep ?? currentStep.value)
 
 const getImageUrl = (n: number) =>
-  new URL(`../assets/images/${n}.png`, import.meta.url).href;
+    new URL(`../assets/images/${n}.png`, import.meta.url).href
 
 const step = (dir: 1 | -1) => {
-  const now = Date.now();
-  if (now - lastStepTime < COOLDOWN_MS) return;  // timestamp check instead
-  
-  const next = currentStep.value + dir;
+  const now = Date.now()
+  if (now - lastStepTime < COOLDOWN_MS) return  // timestamp check instead
+
+  const next = currentStep.value + dir
   if (next >= props.start && next <= props.end) {
-    currentStep.value = next;
-    lastStepTime = now;  // record when step happened
-    exitAttempts.value = 0;
+    currentStep.value = next
+    lastStepTime = now  // record when step happened
+    exitAttempts.value = 0
   }
-};
+}
+
+let lastEventTime = 0
+let lastDelta = 0
 
 const handleWheel = (e: WheelEvent) => {
-  if (!isActive.value || !hasSteps.value) return;
-  if (Math.abs(e.deltaY) < 10) return; // ignore tiny movements
+  const now = performance.now()
+  const isNewGesture = now - lastEventTime > 50
+  const isMomentum = Math.abs(e.deltaY) <= Math.abs(lastDelta)
 
-  const scrollingDown = e.deltaY > 0;
-  const scrollingUp = e.deltaY < 0;
-  const isAtEnd = currentStep.value === props.end;
-  const isAtStart = currentStep.value === props.start;
+  if (!isMomentum && isNewGesture) {
+    console.log("Treat as intentional:", e.deltaY)
+    uniqueScroll(e)
+  }
 
-  if (scrollingDown) {
+  lastEventTime = now
+  lastDelta = e.deltaY
+}
+
+function uniqueScroll(e: WheelEvent) {
+  if (!isActive.value || !hasSteps.value) return
+
+  const scrollingDown = e.deltaY > 0
+  const scrollingUp = e.deltaY < 0
+
+  const isAtEnd = currentStep.value === props.end
+  const isAtStart = currentStep.value === props.start
+
+  // User exceeded scroll threshold for going down
+  if (scrollingUp) {
     if (!isAtEnd) {
-      e.preventDefault();
-      step(1);
-      return;
+      e.preventDefault()
+      step(1)
+      return
     } else {
       if (exitAttempts.value < EXIT_THRESHOLD) {
-        e.preventDefault();
-        exitAttempts.value++;
-        return;
+        e.preventDefault()
+        exitAttempts.value++
+        return
       }
     }
-  } else if (scrollingUp) {
-    if (isAtStart) return;
-
-    e.preventDefault();
-    exitAttempts.value = 0;
-    step(-1);
   }
-};
+  // User exceeded scrolling threshold for going up
+  else if (scrollingDown) {
+    if (isAtStart) return
 
-let touchStartY = 0;
+    e.preventDefault()
+    exitAttempts.value = 0
+    step(-1)
+  }
+}
+
+let touchStartY = 0
 const handleTouchStart = (e: TouchEvent) => {
-  touchStartY = e.touches[0]?.clientY ?? 0;
-};
+  touchStartY = e.touches[0]?.clientY ?? 0
+}
 
 const handleTouchMove = (e: TouchEvent) => {
-  if (!isActive.value) return;
-  const currentY = e.touches[0]?.clientY ?? 0;
-  const delta = touchStartY - currentY;
-  const isAtEnd = currentStep.value === props.end;
+  if (!isActive.value) return
+  const currentY = e.touches[0]?.clientY ?? 0
+  const delta = touchStartY - currentY
+  const isAtEnd = currentStep.value === props.end
 
   if (!isAtEnd || (isAtEnd && delta > 0 && exitAttempts.value < 2)) {
-    if (e.cancelable) e.preventDefault();
+    if (e.cancelable) e.preventDefault()
   }
-};
+}
 
 const handleTouchEnd = (e: TouchEvent) => {
-  const touchEndY = e.changedTouches[0]?.clientY ?? 0;
-  const delta = touchStartY - touchEndY;
+  const touchEndY = e.changedTouches[0]?.clientY ?? 0
+  const delta = touchStartY - touchEndY
 
-  if (Math.abs(delta) < 40) return;
+  if (Math.abs(delta) < 40) return
 
   if (delta > 0) { // Scrolling Down
     if (currentStep.value < props.end) {
-      step(1);
+      step(1)
     } else {
-      exitAttempts.value++;
+      exitAttempts.value++
     }
   } else { // Scrolling Up
     if (currentStep.value > props.start) {
-      step(-1);
-      exitAttempts.value = 0;
+      step(-1)
+      exitAttempts.value = 0
     }
   }
-};
-
-function tryStep(dir: 1 | -1): boolean {
-  const next = currentStep.value + dir;
-  if (next >= props.start && next <= props.end) {
-    step(dir);
-    return true;
-  }
-  return false;
 }
 
-defineExpose({ tryStep });
+function tryStep(dir: 1 | -1): boolean {
+  const next = currentStep.value + dir
+  if (next >= props.start && next <= props.end) {
+    step(dir)
+    return true
+  }
+  return false
+}
+
+defineExpose({tryStep})
 
 onMounted(() => {
   const observer = new IntersectionObserver(
-    (entries) => {
-      const entry = entries[0];
-      if (!entry) return;
-      isActive.value = entry.isIntersecting;
-      if (entry.isIntersecting) {
-        exitAttempts.value = 0;
-      }
-    },
-    { threshold: 0.5 }
-  );
+      (entries) => {
+        const entry = entries[0]
+        if (!entry) return
+        isActive.value = entry.isIntersecting
+        if (entry.isIntersecting) {
+          exitAttempts.value = 0
+        }
+      },
+      {threshold: 0.5}
+  )
 
-  if (sectionRef.value) observer.observe(sectionRef.value);
+  if (sectionRef.value) observer.observe(sectionRef.value)
 
-  window.addEventListener("wheel", handleWheel, { passive: false });
-  sectionRef.value?.addEventListener("touchstart", handleTouchStart, { passive: true });
-  sectionRef.value?.addEventListener("touchmove", handleTouchMove, { passive: false });
-  sectionRef.value?.addEventListener("touchend", handleTouchEnd, { passive: true });
+  window.addEventListener("wheel", handleWheel, {passive: false})
+  sectionRef.value?.addEventListener("touchstart", handleTouchStart, {passive: true})
+  sectionRef.value?.addEventListener("touchmove", handleTouchMove, {passive: false})
+  sectionRef.value?.addEventListener("touchend", handleTouchEnd, {passive: true})
 
   onUnmounted(() => {
-    observer.disconnect();
-    window.removeEventListener("wheel", handleWheel);
-  });
-});
+    observer.disconnect()
+    window.removeEventListener("wheel", handleWheel)
+  })
+})
 </script>
 
 <style scoped>
@@ -168,11 +188,13 @@ onMounted(() => {
   position: relative;
   overflow: hidden;
 }
+
 .bg-layer {
   position: absolute;
   inset: 0;
   z-index: 1;
 }
+
 .bg-layer img {
   position: absolute;
   inset: 0;
@@ -182,9 +204,11 @@ onMounted(() => {
   opacity: 0;
   transition: opacity 0.3s linear;
 }
+
 .bg-layer img.active {
   opacity: 1;
 }
+
 .content-layer {
   width: 50%;
   position: absolute;
@@ -196,9 +220,23 @@ onMounted(() => {
   justify-content: right;
   overflow: visible;
 }
-.content-layer.align-left { left: 0; right: auto; }
-.content-layer.align-center { left: 0; right: 0; margin: 0 auto; margin-top: 2rem; }
-.content-layer.align-right { left: auto; right: 0; }
+
+.content-layer.align-left {
+  left: 0;
+  right: auto;
+}
+
+.content-layer.align-center {
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  margin-top: 2rem;
+}
+
+.content-layer.align-right {
+  left: auto;
+  right: 0;
+}
 
 ::v-deep(.text-card) {
   display: flex;
@@ -240,6 +278,8 @@ onMounted(() => {
 }
 
 @media (hover: none) {
-  .tap-hint { display: block; }
+  .tap-hint {
+    display: block;
+  }
 }
 </style>
