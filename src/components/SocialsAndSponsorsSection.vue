@@ -135,10 +135,8 @@ const BG_STEPS = [14, 15, 16, 17, 18];
 const tapIndex = ref(-1); // -1 = default (13)
 
 const onWrapperTap = (e: MouseEvent | TouchEvent) => {
-  // Only act if the tap wasn't on a link/button — let those handle themselves
   if ((e.target as HTMLElement).closest("a")) return;
   tapIndex.value = (tapIndex.value + 1) % (BG_STEPS.length + 1);
-  // After cycling past the last sponsor, reset to default
   if (tapIndex.value === BG_STEPS.length) {
     tapIndex.value = -1;
     emit("hover-step", null);
@@ -147,7 +145,6 @@ const onWrapperTap = (e: MouseEvent | TouchEvent) => {
     if (stepToSend !== undefined) {
       emit("hover-step", stepToSend);
     } else {
-      // Fallback or handle unexpected undefined, though it shouldn't happen with the modulo logic the error trigers on build
       emit("hover-step", null);
     }
   }
@@ -174,11 +171,12 @@ const onWrapperTap = (e: MouseEvent | TouchEvent) => {
   box-sizing: border-box;
   position: relative;
   overflow: visible;
+  margin-top: 5rem;
 }
 
 .minecraft-characters {
   position: absolute;
-  top: -300px;
+  top: -220px;
   left: 50%;
   transform: translateX(-50%);
   width: 400px;

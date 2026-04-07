@@ -210,7 +210,7 @@ onUnmounted(() => {
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 999px;
-  padding: 0.25rem 0.35rem;
+  padding: 0.5rem 0.5rem;
 }
 
 .nav-item {
@@ -275,7 +275,7 @@ footer {
 
 @media (max-width: 480px) {
   .section-nav {
-    bottom: 3.5rem;
+    bottom: 4.5rem;
   }
 }
 </style>
