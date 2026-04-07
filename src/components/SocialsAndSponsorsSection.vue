@@ -15,6 +15,8 @@
           href="http://discord.gg/n92fmjhw8v"
           target="_blank"
           class="social-link"
+          alt="Discord icon"
+          title="Discord"
           @mouseenter="emit('hover-step', 14)"
           @mouseleave="emit('hover-step', null)"
         >
@@ -28,6 +30,8 @@
           href="https://www.youtube.com/@projectbeaconworld"
           target="_blank"
           class="social-link"
+          alt="YouTube icon"
+          title="YouTube"
           @mouseenter="emit('hover-step', 15)"
           @mouseleave="emit('hover-step', null)"
         >
@@ -41,6 +45,8 @@
           href="https://blog.projectbeacon.world/posts/"
           target="_blank"
           class="social-link"
+          alt="Blog icon"
+          title="Blog"
           @mouseenter="emit('hover-step', 16)"
           @mouseleave="emit('hover-step', null)"
         >
@@ -58,6 +64,8 @@
           <a
             href="https://youtrack.projectbeacon.world/"
             target="_blank"
+            alt="Youtrack"
+            title="Youtrack"
             @mouseenter="emit('hover-step', 17)"
             @mouseleave="emit('hover-step', null)"
           >
@@ -70,6 +78,8 @@
           <a
             href="https://24fire.de/?ref=beacon"
             target="_blank"
+            alt="24 Fire"
+            title="24 Fire"
             @mouseenter="emit('hover-step', 18)"
             @mouseleave="emit('hover-step', null)"
           >
