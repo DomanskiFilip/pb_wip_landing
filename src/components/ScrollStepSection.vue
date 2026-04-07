@@ -34,8 +34,10 @@ const isActive = ref(false);
 
 const exitAttempts = ref(0);
 const EXIT_THRESHOLD = 3; 
-let lastStepTime = 0;
-const COOLDOWN_MS = 400;
+let wheelAccum = 0;
+let wheelTimer: ReturnType<typeof setTimeout> | null = null;
+const TRACKPAD_THRESHOLD = 80;
+const MOUSE_DELTA = 100;
 
 
 const hasSteps = computed(() => props.start !== props.end);
@@ -45,64 +47,50 @@ const getImageUrl = (n: number) =>
   new URL(`../assets/images/${n}.png`, import.meta.url).href;
 
 const step = (dir: 1 | -1) => {
-  const now = Date.now();
-  if (now - lastStepTime < COOLDOWN_MS) return;  // timestamp check instead
-  
   const next = currentStep.value + dir;
   if (next >= props.start && next <= props.end) {
     currentStep.value = next;
-    lastStepTime = now;  // record when step happened
     exitAttempts.value = 0;
   }
 };
 
-let lastEventTime = 0
-let lastDelta = 0
+ const handleWheel = (e: WheelEvent) => {
+   if (!isActive.value || !hasSteps.value) return;
+   if (Math.abs(e.deltaY) < 5) return;
 
-const handleWheel = (e: WheelEvent) => {
-  const now = performance.now()
-  const isNewGesture = now - lastEventTime > 50
-  const isMomentum = Math.abs(e.deltaY) <= Math.abs(lastDelta)
+   const isAtEnd = currentStep.value === props.end;
+   const isAtStart = currentStep.value === props.start;
+   const isMouse   = Math.abs(e.deltaY) >= MOUSE_DELTA || e.deltaMode !== 0;
 
-  if (!isMomentum && isNewGesture) {
-    console.log("Treat as intentional:", e.deltaY)
-    uniqueScroll(e)
-  }
+   if (isMouse) {
+     // Mouse wheel: one event = one step (original behaviour)
+     if (e.deltaY > 0) {
+       if (!isAtEnd) { e.preventDefault(); step(1); }
+       else if (exitAttempts.value < EXIT_THRESHOLD) { e.preventDefault(); exitAttempts.value++; }
+     } else {
+       if (!isAtStart) { e.preventDefault(); exitAttempts.value = 0; step(-1); }
+     }
+     return;
+   }
 
-  lastEventTime = now
-  lastDelta = e.deltaY
-}
+   // Trackpad: accumulate pixels, step only when threshold is crossed
+   const scrollingDown = e.deltaY > 0;
+   if (scrollingDown && isAtEnd && exitAttempts.value >= EXIT_THRESHOLD) return;
+   if (!scrollingDown && isAtStart) return;
 
-function uniqueScroll(e: WheelEvent) {
-  if (!isActive.value || !hasSteps.value) return
+   e.preventDefault();
+   wheelAccum += e.deltaY;
 
-  const scrollingDown = e.deltaY > 0;
-  const scrollingUp = e.deltaY < 0;
-  const isAtEnd = currentStep.value === props.end;
-  const isAtStart = currentStep.value === props.start;
+   if (Math.abs(wheelAccum) >= TRACKPAD_THRESHOLD) {
+     const dir = wheelAccum > 0 ? 1 : -1;
+     wheelAccum = 0;
+     if (dir === 1 && isAtEnd) { exitAttempts.value++; return; }
+     step(dir);
+   }
 
-  // User exceeded scroll threshold for going down
-  if (scrollingDown) {
-    if (!isAtEnd) {
-      e.preventDefault();
-      step(1);
-      return;
-    } else {
-      if (exitAttempts.value < EXIT_THRESHOLD) {
-        e.preventDefault();
-        exitAttempts.value++;
-        return;
-      }
-    }
-  }
-  // User exceeded scrolling threshold for going up
-  else if (scrollingUp) {
-    if (isAtStart) return;
-
-    e.preventDefault();
-    exitAttempts.value = 0;
-    step(-1);
-  }
+   // Reset accumulator if user pauses mid-gesture
+   if (wheelTimer) clearTimeout(wheelTimer);
+   wheelTimer = setTimeout(() => { wheelAccum = 0; }, 150);
 };
 
 let touchStartY = 0;
@@ -187,13 +175,11 @@ onMounted(() => {
   position: relative;
   overflow: hidden;
 }
-
 .bg-layer {
   position: absolute;
   inset: 0;
   z-index: 1;
 }
-
 .bg-layer img {
   position: absolute;
   inset: 0;
@@ -203,11 +189,9 @@ onMounted(() => {
   opacity: 0;
   transition: opacity 0.3s linear;
 }
-
 .bg-layer img.active {
   opacity: 1;
 }
-
 .content-layer {
   width: 50%;
   position: absolute;
