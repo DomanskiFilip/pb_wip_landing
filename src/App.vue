@@ -151,8 +151,6 @@ function onScroll() {
   if (!container) return;
   const scrollTop = container.scrollTop;
   const height = container.clientHeight;
-  // debug statement
-  // console.log(`ScrollTop: ${scrollTop}, Height: ${height}`);
   const children = Array.from(container.children) as HTMLElement[];
 
   const bannerBottom = (children[0]?.offsetTop ?? 0) + (children[0]?.offsetHeight ?? 0);
