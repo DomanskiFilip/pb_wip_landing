@@ -181,12 +181,12 @@ const onWrapperTap = (e: MouseEvent | TouchEvent) => {
   box-sizing: border-box;
   position: relative;
   overflow: visible;
-  margin-top: 5rem;
+  margin-top: 7rem;
 }
 
 .minecraft-characters {
   position: absolute;
-  top: -220px;
+  top: -188px;
   left: 50%;
   transform: translateX(-50%);
   width: 400px;
@@ -308,7 +308,7 @@ const onWrapperTap = (e: MouseEvent | TouchEvent) => {
 
   .minecraft-characters {
     width: 280px;
-    top: -130px;
+    top: -98px;
   }
 
   .social-text {
@@ -349,7 +349,7 @@ const onWrapperTap = (e: MouseEvent | TouchEvent) => {
 
   .minecraft-characters {
     width: 210px;
-    top: -77px;
+    top: -45px;
   }
 
   .social-icon {

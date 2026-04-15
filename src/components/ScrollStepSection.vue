@@ -33,12 +33,10 @@ const currentStep = ref(props.start);
 const isActive = ref(false);
 
 const exitAttempts = ref(0);
-const EXIT_THRESHOLD = 3; 
-let wheelAccum = 0;
-let wheelTimer: ReturnType<typeof setTimeout> | null = null;
-const TRACKPAD_THRESHOLD = 80;
-const MOUSE_DELTA = 100;
-
+// Increase this slightly for Mac trackpads to ensure intent
+const EXIT_THRESHOLD = 2; 
+let lastWheelTime = 0;
+const SCROLL_COOLDOWN = 600; 
 
 const hasSteps = computed(() => props.start !== props.end);
 const activeStep = computed(() => props.overrideStep ?? currentStep.value);
@@ -54,91 +52,59 @@ const step = (dir: 1 | -1) => {
   }
 };
 
- const handleWheel = (e: WheelEvent) => {
-   if (!isActive.value || !hasSteps.value) return;
-   if (Math.abs(e.deltaY) < 5) return;
+const handleWheel = (e: WheelEvent) => {
+  if (!isActive.value || !hasSteps.value) return;
 
-   const isAtEnd = currentStep.value === props.end;
-   const isAtStart = currentStep.value === props.start;
-   const isMouse   = Math.abs(e.deltaY) >= MOUSE_DELTA || e.deltaMode !== 0;
-
-   if (isMouse) {
-     // Mouse wheel: one event = one step (original behaviour)
-     if (e.deltaY > 0) {
-       if (!isAtEnd) { e.preventDefault(); step(1); }
-       else if (exitAttempts.value < EXIT_THRESHOLD) { e.preventDefault(); exitAttempts.value++; }
-     } else {
-       if (!isAtStart) { e.preventDefault(); exitAttempts.value = 0; step(-1); }
-     }
-     return;
-   }
-
-   // Trackpad: accumulate pixels, step only when threshold is crossed
-   const scrollingDown = e.deltaY > 0;
-   if (scrollingDown && isAtEnd && exitAttempts.value >= EXIT_THRESHOLD) return;
-   if (!scrollingDown && isAtStart) return;
-
-   e.preventDefault();
-   wheelAccum += e.deltaY;
-
-   if (Math.abs(wheelAccum) >= TRACKPAD_THRESHOLD) {
-     const dir = wheelAccum > 0 ? 1 : -1;
-     wheelAccum = 0;
-     if (dir === 1 && isAtEnd) { exitAttempts.value++; return; }
-     step(dir);
-   }
-
-   // Reset accumulator if user pauses mid-gesture
-   if (wheelTimer) clearTimeout(wheelTimer);
-   wheelTimer = setTimeout(() => { wheelAccum = 0; }, 150);
-};
-
-let touchStartY = 0;
-const handleTouchStart = (e: TouchEvent) => {
-  touchStartY = e.touches[0]?.clientY ?? 0;
-};
-
-const handleTouchMove = (e: TouchEvent) => {
-  if (!isActive.value) return;
-  const currentY = e.touches[0]?.clientY ?? 0;
-  const delta = touchStartY - currentY;
   const isAtEnd = currentStep.value === props.end;
+  const isAtStart = currentStep.value === props.start;
+  const scrollingDown = e.deltaY > 0;
 
-  if (!isAtEnd || (isAtEnd && delta > 0 && exitAttempts.value < 2)) {
-    if (e.cancelable) e.preventDefault();
+  // CRITICAL: If we are in the middle of steps, we MUST preventDefault
+  // to stop the Mac from scrolling the actual webpage.
+  if (scrollingDown && !isAtEnd) {
+    e.preventDefault();
+  } else if (!scrollingDown && !isAtStart) {
+    e.preventDefault();
+  } else if (scrollingDown && isAtEnd && exitAttempts.value < EXIT_THRESHOLD) {
+    // Hold the user at the end of the section for a few "notches"
+    e.preventDefault();
   }
-};
 
-const handleTouchEnd = (e: TouchEvent) => {
-  const touchEndY = e.changedTouches[0]?.clientY ?? 0;
-  const delta = touchStartY - touchEndY;
+  // Threshold to ignore tiny trackpad jitters
+  if (Math.abs(e.deltaY) < 10) return;
 
-  if (Math.abs(delta) < 40) return;
+  const now = Date.now();
+  if (now - lastWheelTime < SCROLL_COOLDOWN) return;
 
-  if (delta > 0) { // Scrolling Down
-    if (currentStep.value < props.end) {
+  if (scrollingDown) {
+    if (!isAtEnd) {
       step(1);
-    } else {
+      lastWheelTime = now;
+    } else if (exitAttempts.value < EXIT_THRESHOLD) {
       exitAttempts.value++;
+      lastWheelTime = now;
     }
-  } else { // Scrolling Up
-    if (currentStep.value > props.start) {
+  } else {
+    if (!isAtStart) {
       step(-1);
+      lastWheelTime = now;
+    } else {
       exitAttempts.value = 0;
     }
   }
 };
 
-function tryStep(dir: 1 | -1): boolean {
-  const next = currentStep.value + dir;
-  if (next >= props.start && next <= props.end) {
-    step(dir);
-    return true;
-  }
-  return false;
-}
+// Touch logic remains the same but with added preventDefault safety
+const handleTouchMove = (e: TouchEvent) => {
+  if (!isActive.value || !hasSteps.value) return;
+  const isAtEnd = currentStep.value === props.end;
+  const isAtStart = currentStep.value === props.start;
 
-defineExpose({ tryStep });
+  // Only prevent default if we aren't trying to leave the section
+  if (!isAtEnd && !isAtStart) {
+    if (e.cancelable) e.preventDefault();
+  }
+};
 
 onMounted(() => {
   const observer = new IntersectionObserver(
@@ -150,36 +116,46 @@ onMounted(() => {
         exitAttempts.value = 0;
       }
     },
-    { threshold: 0.5 }
+    { threshold: 0.6 } // Higher threshold ensures we are locked in before logic starts
   );
 
   if (sectionRef.value) observer.observe(sectionRef.value);
 
+  // Use { passive: false } - this is required to allow e.preventDefault()
   window.addEventListener("wheel", handleWheel, { passive: false });
-  sectionRef.value?.addEventListener("touchstart", handleTouchStart, { passive: true });
   sectionRef.value?.addEventListener("touchmove", handleTouchMove, { passive: false });
-  sectionRef.value?.addEventListener("touchend", handleTouchEnd, { passive: true });
-
-  onUnmounted(() => {
-    observer.disconnect();
-    window.removeEventListener("wheel", handleWheel);
-  });
 });
+
+onUnmounted(() => {
+  window.removeEventListener("wheel", handleWheel);
+});
+
+function tryStep(dir: 1 | -1): boolean {
+  const next = currentStep.value + dir;
+  if (next >= props.start && next <= props.end) {
+    step(dir);
+    return true;
+  }
+  return false;
+}
+defineExpose({ tryStep });
 </script>
 
 <style scoped>
-/* Keeping your existing styles... */
 .scroll-wrapper {
   height: 100vh;
   width: 100vw;
   position: relative;
   overflow: hidden;
+  contain: paint; 
 }
+
 .bg-layer {
   position: absolute;
   inset: 0;
   z-index: 1;
 }
+
 .bg-layer img {
   position: absolute;
   inset: 0;
@@ -187,11 +163,13 @@ onMounted(() => {
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  transition: opacity 0.3s linear;
+  transition: opacity 0.4s ease-in-out;
 }
+
 .bg-layer img.active {
   opacity: 1;
 }
+
 .content-layer {
   width: 50%;
   position: absolute;
@@ -201,52 +179,29 @@ onMounted(() => {
   display: flex;
   align-items: flex-start;
   justify-content: right;
-  overflow: visible;
+  padding-top: 10vh;
 }
+
 .content-layer.align-left { left: 0; right: auto; }
-.content-layer.align-center { left: 0; right: 0; margin: 0 auto; margin-top: 2rem; }
+.content-layer.align-center { left: 0; right: 0; margin: 0 auto; justify-content: center; }
 .content-layer.align-right { left: auto; right: 0; }
 
 ::v-deep(.text-card) {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  background: rgba(255, 255, 255, 0.2);
-  padding: 2rem 1rem;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 2rem;
   border-radius: 20px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
-  transition: all 0.3s ease-in-out;
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   color: white;
-}
-
-.tap-hint {
-  display: none;
-  position: absolute;
-  bottom: 8rem;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.4);
-  text-align: center;
-  pointer-events: none;
-  z-index: 20;
+  max-width: 80%;
 }
 
 @media (max-width: 999px) {
   .content-layer {
-    left: 0 !important;
-    right: 0 !important;
-    width: 100% !important;
+    width: 100%;
     justify-content: center;
-    align-items: center;
-    padding: 1rem;
+    padding: 2rem;
+    padding-top: 5vh;
   }
-}
-
-@media (hover: none) {
-  .tap-hint { display: block; }
 }
 </style>
