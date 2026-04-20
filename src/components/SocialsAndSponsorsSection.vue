@@ -111,7 +111,36 @@
             </svg>
           </a>
         </p>
-        <p>Design: YannMan, cosston, speed_shark</p>
+        <p>Design: YannMan,
+          <a href="https://linktr.ee/cosston" target="_blank">
+          Colton Moss,
+          </a>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="12px"
+            viewBox="0 -960 960 960"
+            width="12px"
+            fill="#ffffff"
+          >
+            <path
+              d="m243-240-51-51 405-405H240v-72h480v480h-72v-357L243-240Z"
+            />
+          </svg>
+          <a href="https://www.youtube.com/channel/UCa3ciQYn5wURrUB-l-yNrpw" target="_blank">
+          Bree_TA
+          </a>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="12px"
+            viewBox="0 -960 960 960"
+            width="12px"
+            fill="#ffffff"
+          >
+            <path
+              d="m243-240-51-51 405-405H240v-72h480v480h-72v-357L243-240Z"
+            />
+          </svg>
+        </p>
         <p>
           Editorial:
           <a href="https://x.com/1m5rian" target="_blank">
@@ -193,6 +222,7 @@ const onWrapperTap = (e: MouseEvent | TouchEvent) => {
   height: auto;
   z-index: 20;
   pointer-events: none;
+  filter: drop-shadow(0 8px 10px rgba(0,0,0,0.5));
 }
 
 .social-text {

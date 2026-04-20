@@ -93,7 +93,7 @@ img {
 
 .coming-soon {
   position: absolute;
-  top: 63%;
+  top: 65%;
   left: 66%;
   z-index: 3;
   display: inline-block;
@@ -107,6 +107,7 @@ img {
   transform: translate(-50%, -50%) rotate(330deg);
   animation: coming-pulse 1.6s ease-in-out infinite;
   pointer-events: none;
+  filter: drop-shadow(0 2px 5px hsl(66, 100%, 50%));
 }
 
 @media (max-width: 999px) {
