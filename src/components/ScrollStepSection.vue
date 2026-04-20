@@ -116,12 +116,11 @@ onMounted(() => {
         exitAttempts.value = 0;
       }
     },
-    { threshold: 0.6 } // Higher threshold ensures we are locked in before logic starts
+    { threshold: 0.6 }
   );
 
   if (sectionRef.value) observer.observe(sectionRef.value);
 
-  // Use { passive: false } - this is required to allow e.preventDefault()
   window.addEventListener("wheel", handleWheel, { passive: false });
   sectionRef.value?.addEventListener("touchmove", handleTouchMove, { passive: false });
 });
@@ -187,11 +186,12 @@ defineExpose({ tryStep });
 .content-layer.align-right { left: auto; right: 0; }
 
 ::v-deep(.text-card) {
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(255, 255, 255, 0.4);
   padding: 2rem;
   border-radius: 20px;
   backdrop-filter: blur(15px);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0px 15px 15px  rgba(255, 255, 255, 0.4);
   color: white;
   max-width: 80%;
 }

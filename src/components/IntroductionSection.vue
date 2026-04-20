@@ -16,6 +16,7 @@
 .text-card div {
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
 .text-card div img {
@@ -25,5 +26,9 @@
 
 .text-card div h1 {
   font-weight: bold;
+}
+
+.text-card p {
+  text-align: center;
 }
 </style>

@@ -5,7 +5,7 @@
     <p v-html="currentParagraph2"></p>
   </div>
   <img
-    v-if="stepIndex === 2"
+    v-if="stepIndex === 3"
     src="/src/assets/images/YOU.png"
     alt="We need you"
     class="you-image"
@@ -26,8 +26,9 @@ const content = [
     paragraph1:
       'Project Beacon is a non-profit <span class="bold">community</span>  project (not affiliated with Mojang studios in any way) that aims to create a fully animated feature-length film based on the universe of Minecraft.',
     paragraph2:
-      'That\'s right, whether you\'re a <span style="color: hsl(358, 100%, 49%);">writer</span>, a <span style="color: hsl(170, 100%, 60%);">storyboard artist</span>, a <span style="color: hsl(25, 100%, 62%);">3D artist</span>, a <span style="color: hsl(288, 99%, 34%);">voice actor</span>, a <span style="color: hsl(137, 100%, 53%);">musician</span>, an <span style="color: hsl(72, 100%, 58%);">editor</span> or just passionate about the game, <span class="bold">We need <span class="animated-text">YOUR</span> help to make this project a reality!</span> ',
+      "",
   },
+  { title: "", paragraph1: 'That\'s right, whether you\'re a <span style="color: hsl(358, 100%, 49%);">writer</span>, a <span style="color: hsl(170, 100%, 60%);">storyboard artist</span>, a <span style="color: hsl(25, 100%, 62%);">3D artist</span>, a <span style="color: hsl(288, 99%, 34%);">voice actor</span>, a <span style="color: hsl(137, 100%, 53%);">musician</span>, an <span style="color: hsl(72, 100%, 58%);">editor</span> or just passionate about the game, <span class="bold">We need <span class="animated-text">YOUR</span> help to make this project a reality!</span> ', paragraph2: "" },
   { title: "", paragraph1: "", paragraph2: "" },
   {
     title: "How would this work?",
@@ -48,7 +49,6 @@ const content = [
   { title: "", paragraph1: "", paragraph2: "" },
   { title: "", paragraph1: "", paragraph2: "" },
   { title: "", paragraph1: "", paragraph2: "" },
-  { title: "", paragraph1: "", paragraph2: "" },
   {
     title: "What's next for Project Beacon?",
     paragraph1:
@@ -60,7 +60,7 @@ const content = [
 
 const shouldShowCard = computed(() => {
   return (
-    props.stepIndex === 1 || props.stepIndex === 3 || props.stepIndex === 5 ||
+    props.stepIndex === 1 || props.stepIndex === 2 || props.stepIndex === 4 ||
     props.stepIndex === props.steps
   );
 });
@@ -77,7 +77,6 @@ const currentParagraph2 = computed(
 <style scoped>
 .text-card {
   width: 500px;
-  height: 80vh;
   justify-content: flex-start;
   padding-top: 5vh;
   animation: fadeIn 0.6s ease-in-out;
@@ -85,11 +84,12 @@ const currentParagraph2 = computed(
 }
 
 .text-card h1 {
-  font-size: 3rem;
+  font-size: 2.5rem;
+  margin-bottom: 1rem;;
 }
 
 .text-card p {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   line-height: 1.5;
 }
 
