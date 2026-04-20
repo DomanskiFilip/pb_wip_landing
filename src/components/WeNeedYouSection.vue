@@ -85,7 +85,8 @@ const currentParagraph2 = computed(
 
 .text-card h1 {
   font-size: 2.5rem;
-  margin-bottom: 1rem;;
+  margin-bottom: 1rem;
+  text-align: center;
 }
 
 .text-card p {

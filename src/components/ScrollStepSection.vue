@@ -191,7 +191,7 @@ defineExpose({ tryStep });
   border-radius: 20px;
   backdrop-filter: blur(15px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0px 15px 15px  rgba(255, 255, 255, 0.4);
+  box-shadow: -5px 5px 15px  rgba(255, 255, 255, 0.4);
   color: white;
   max-width: 80%;
 }
