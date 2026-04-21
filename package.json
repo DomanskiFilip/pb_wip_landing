@@ -9,7 +9,7 @@
     "start": "node .output/server/index.mjs",
     "preview": "nuxi preview",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d .output/publi"
+    "deploy": "gh-pages -d .output/public"
   },
   "dependencies": {
     "nuxt": "^3.8.0"
