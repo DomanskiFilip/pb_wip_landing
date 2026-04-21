@@ -1,12 +1,16 @@
 <template>
   <div class="text-card">
     <div>
-      <img src="/src/assets/images/Beacon.png" alt="Project Beacon Logo">
-      <h1> Project Beacon</h1>
+      <img :src="Beacon" alt="Project Beacon Logo" />
+      <h1>Project Beacon</h1>
     </div>
     <p>“a Minecraft movie for the community by the community”</p>
   </div>
 </template>
+
+<script setup>
+import Beacon from "~/assets/images/Beacon.png";
+</script>
 
 <style scoped>
 .text-card {

@@ -25,3 +25,9 @@ dist-ssr
 /.zed/*
 .zed/settings.json
 .vite-hooks/
+
+
+# Nuxt / build outputs
+.output
+.nuxt
+.output/public
