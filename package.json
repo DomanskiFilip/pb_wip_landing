@@ -9,7 +9,7 @@
     "start": "node .output/server/index.mjs",
     "preview": "nuxi preview",
     "generate": "nuxi generate",
-    "predeploy": "npm run generate",
+    "predeploy": "pnpm run generate",
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {

@@ -5,7 +5,9 @@
         v-for="n in imageCount"
         :key="n"
         :src="getImageUrl(n)"
-        :class="{ active: activeStep === n || (!hasSteps && n === props.start) }"
+        :class="{
+          active: activeStep === n || (!hasSteps && n === props.start),
+        }"
         alt="background"
       />
     </div>
@@ -34,15 +36,29 @@ const isActive = ref(false);
 
 const exitAttempts = ref(0);
 // Increase this slightly for Mac trackpads to ensure intent
-const EXIT_THRESHOLD = 2; 
+const EXIT_THRESHOLD = 2;
 let lastWheelTime = 0;
-const SCROLL_COOLDOWN = 600; 
+const SCROLL_COOLDOWN = 600;
 
 const hasSteps = computed(() => props.start !== props.end);
 const activeStep = computed(() => props.overrideStep ?? currentStep.value);
 
-const getImageUrl = (n: number) =>
-  new URL(`../assets/images/${n}.png`, import.meta.url).href;
+// Build a map of image URLs using Vite's glob
+const imageModules = import.meta.glob("../assets/images/*.png", {
+  eager: true,
+  as: "url",
+}) as Record<string, string>;
+const imageMap = Object.fromEntries(
+  Object.entries(imageModules).map(([p, url]) => {
+    const file = p.split("/").pop()!;
+    return [file, url];
+  }),
+);
+
+const getImageUrl = (n: number) => {
+  const key = `${n}.png`;
+  return imageMap[key] ?? imageMap[`${n}.PNG`] ?? "";
+};
 
 const step = (dir: 1 | -1) => {
   const next = currentStep.value + dir;
@@ -116,13 +132,15 @@ onMounted(() => {
         exitAttempts.value = 0;
       }
     },
-    { threshold: 0.6 }
+    { threshold: 0.6 },
   );
 
   if (sectionRef.value) observer.observe(sectionRef.value);
 
   window.addEventListener("wheel", handleWheel, { passive: false });
-  sectionRef.value?.addEventListener("touchmove", handleTouchMove, { passive: false });
+  sectionRef.value?.addEventListener("touchmove", handleTouchMove, {
+    passive: false,
+  });
 });
 
 onUnmounted(() => {
@@ -146,7 +164,7 @@ defineExpose({ tryStep });
   width: 100vw;
   position: relative;
   overflow: hidden;
-  contain: paint; 
+  contain: paint;
 }
 
 .bg-layer {
@@ -181,9 +199,20 @@ defineExpose({ tryStep });
   padding-top: 10vh;
 }
 
-.content-layer.align-left { left: 0; right: auto; }
-.content-layer.align-center { left: 0; right: 0; margin: 0 auto; justify-content: center; }
-.content-layer.align-right { left: auto; right: 0; }
+.content-layer.align-left {
+  left: 0;
+  right: auto;
+}
+.content-layer.align-center {
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  justify-content: center;
+}
+.content-layer.align-right {
+  left: auto;
+  right: 0;
+}
 
 ::v-deep(.text-card) {
   background: rgba(255, 255, 255, 0.4);
@@ -191,7 +220,7 @@ defineExpose({ tryStep });
   border-radius: 20px;
   backdrop-filter: blur(15px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: -5px 5px 15px  rgba(255, 255, 255, 0.4);
+  box-shadow: -5px 5px 15px rgba(255, 255, 255, 0.4);
   color: white;
   max-width: 80%;
 }
