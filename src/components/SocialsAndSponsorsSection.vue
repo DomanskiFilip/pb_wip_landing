@@ -111,7 +111,7 @@
             </svg>
           </a>
         </p>
-        <p>Design: YannMan,
+        <p>Design: YannMan, LimeCrystal10
           <a href="https://linktr.ee/cosston" target="_blank">
           Colton Moss,
           </a>
