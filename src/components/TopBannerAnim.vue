@@ -87,7 +87,9 @@ img {
   transform: translate(-50%, -50%);
   z-index: 2;
   width: 50%;
+  max-width: 1100px;
   height: 35%;
+  max-height: 650px;
   pointer-events: none;
 }
 
@@ -118,7 +120,7 @@ img {
 
   .coming-soon {
     font-size: 1.25rem;
-    top: 68%;
+    top: 55%;
     left: 72%;
     padding: 0.25em 0.6em;
     transform: translate(-50%, -50%) rotate(330deg) scale(0.92);
