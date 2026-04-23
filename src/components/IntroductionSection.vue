@@ -9,7 +9,7 @@
 </template>
 
 <script setup>
-import Beacon from "~/assets/images/Beacon.png";
+import Beacon from "../assets/images/Beacon.png";
 </script>
 
 <style scoped>

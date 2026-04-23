@@ -1,5 +1,6 @@
 <template>
   <div class="video-wrapper">
+    <!-- Placeholder shown while video loads -->
     <div class="placeholder" :class="{ hidden: videoReady }"></div>
 
     <video
@@ -11,28 +12,23 @@
       :class="{ visible: videoReady }"
       @canplay="onCanPlay"
     >
-      <source :src="bannerUrl" type="video/mp4" />
+      <source :src="banner" type="video/mp4" />
       Your browser does not support the video tag.
     </video>
-
-    <img :src="bannerTitleUrl" alt="Banner Title Image" />
+    <img :src="banner_title" alt="Banner Title Image" />
     <h3 class="coming-soon">coming soon...</h3>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref } from "vue";
+import banner from "../assets/videos/Banner.mp4";
+import banner_title from "../assets/images/banner-title.png";
 
-const videos = import.meta.glob('../assets/videos/*.mp4', { eager: true, as: 'url' }) as Record<string, string>
-const images = import.meta.glob('../assets/images/*.png', { eager: true, as: 'url' }) as Record<string, string>
-
-const bannerUrl = videos['../assets/videos/Banner.mp4'] ?? videos['../assets/videos/banner.mp4'] ?? ''
-const bannerTitleUrl = images['../assets/images/banner-title.png'] ?? images['../assets/images/banner-title.PNG'] ?? ''
-
-const videoReady = ref(false)
+const videoReady = ref(false);
 
 function onCanPlay() {
-  videoReady.value = true
+  videoReady.value = true;
 }
 </script>
 
@@ -91,9 +87,7 @@ img {
   transform: translate(-50%, -50%);
   z-index: 2;
   width: 50%;
-  max-width: 1100px;
   height: 35%;
-  max-height: 650px;
   pointer-events: none;
 }
 
@@ -124,7 +118,7 @@ img {
 
   .coming-soon {
     font-size: 1.25rem;
-    top: 55%;
+    top: 68%;
     left: 72%;
     padding: 0.25em 0.6em;
     transform: translate(-50%, -50%) rotate(330deg) scale(0.92);
