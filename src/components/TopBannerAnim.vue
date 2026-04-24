@@ -3,15 +3,17 @@
     <div class="placeholder" :class="{ hidden: videoReady }"></div>
 
     <video
+      ref="videoEl"
       autoplay
       muted
       loop
       playsinline
+      preload="metadata"
+      :src="activeVideoSrc"
       id="top-banner-video"
       :class="{ visible: videoReady }"
       @canplay="onCanPlay"
     >
-      <source :src="bannerUrl" type="video/mp4" />
       Your browser does not support the video tag.
     </video>
 
@@ -21,19 +23,100 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 
-const videos = import.meta.glob('../assets/videos/*.mp4', { eager: true, as: 'url' }) as Record<string, string>
-const images = import.meta.glob('../assets/images/*.png', { eager: true, as: 'url' }) as Record<string, string>
+const videos = import.meta.glob('../assets/videos/*.webm', { eager: true, query: '?url', import: 'default' }) as Record<string, string>
+const images = import.meta.glob('../assets/images/*.png', { eager: true, query: '?url', import: 'default' }) as Record<string, string>
 
-const bannerUrl = videos['../assets/videos/Banner.mp4'] ?? videos['../assets/videos/banner.mp4'] ?? ''
+const lowBannerUrl = videos['../assets/videos/low.webm'] ?? ''
+const normalBannerUrl = videos['../assets/videos/normal.webm'] ?? ''
 const bannerTitleUrl = images['../assets/images/banner-title.png'] ?? images['../assets/images/banner-title.PNG'] ?? ''
 
+const videoEl = ref<HTMLVideoElement | null>(null)
+const activeVideoSrc = ref(lowBannerUrl)
 const videoReady = ref(false)
+
+let idleCallbackId: number | null = null
+let timeoutId: number | null = null
+let preloadVideo: HTMLVideoElement | null = null
+let hasUpgradedToNormal = false
 
 function onCanPlay() {
   videoReady.value = true
 }
+
+function cleanupPreloadVideo() {
+  if (!preloadVideo) return
+  preloadVideo.removeAttribute('src')
+  preloadVideo.load()
+  preloadVideo = null
+}
+
+async function upgradeToNormalVideo() {
+  if (!normalBannerUrl || hasUpgradedToNormal || activeVideoSrc.value === normalBannerUrl) return
+
+  preloadVideo = document.createElement('video')
+  preloadVideo.preload = 'auto'
+  preloadVideo.muted = true
+  preloadVideo.src = normalBannerUrl
+
+  const handleReady = async () => {
+    if (hasUpgradedToNormal) return
+
+    hasUpgradedToNormal = true
+    const previousTime = videoEl.value?.currentTime ?? 0
+    const shouldResumePlayback = Boolean(videoEl.value && !videoEl.value.paused)
+
+    activeVideoSrc.value = normalBannerUrl
+    await nextTick()
+
+    if (videoEl.value) {
+      videoEl.value.currentTime = previousTime
+      if (shouldResumePlayback) {
+        void videoEl.value.play().catch(() => undefined)
+      }
+    }
+
+    cleanupPreloadVideo()
+  }
+
+  preloadVideo.addEventListener('canplaythrough', handleReady, { once: true })
+  preloadVideo.addEventListener('canplay', handleReady, { once: true })
+  preloadVideo.load()
+}
+
+onMounted(() => {
+  // Defer high-quality stream download until the main thread has idle time.
+  const win = window as Window & {
+    requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number
+    cancelIdleCallback?: (handle: number) => void
+  }
+
+  if (typeof win.requestIdleCallback === 'function') {
+    idleCallbackId = win.requestIdleCallback(() => {
+      void upgradeToNormalVideo()
+    }, { timeout: 3000 })
+    return
+  }
+
+  timeoutId = window.setTimeout(() => {
+    void upgradeToNormalVideo()
+  }, 1500)
+})
+
+onBeforeUnmount(() => {
+  const win = window as Window & { cancelIdleCallback?: (handle: number) => void }
+
+  if (idleCallbackId !== null && typeof win.cancelIdleCallback === 'function') {
+    win.cancelIdleCallback(idleCallbackId)
+  }
+
+  if (timeoutId !== null) {
+    window.clearTimeout(timeoutId)
+  }
+
+  cleanupPreloadVideo()
+})
 </script>
 
 <style scoped>
