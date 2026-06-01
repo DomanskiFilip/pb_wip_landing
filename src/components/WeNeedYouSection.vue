@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import YouImage from "~/assets/images/YOU.png";
+import YouImage from "../assets/images/YOU.png";
 
 const props = defineProps<{
   stepIndex: number;
